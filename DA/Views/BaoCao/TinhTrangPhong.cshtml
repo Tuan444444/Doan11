@@ -1,0 +1,22 @@
+﻿@{
+    ViewData["Title"] = "Thống kê Tình trạng phòng";
+}
+
+<h3>🏠 Thống kê Tình trạng phòng</h3>
+
+<canvas id="phongChart"></canvas>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    new Chart(document.getElementById('phongChart'), {
+        type: 'bar',
+        data: {
+            labels: ['Trống', 'Đang thuê', 'Bảo trì'],
+            datasets: [{
+                label: 'Tình trạng phòng',
+                data: [@ViewBag.Trong, @ViewBag.DaThue, @ViewBag.BaoTri],
+                backgroundColor: ['#ffc107', '#17a2b8', '#6c757d']
+            }]
+        }
+    });
+</script>

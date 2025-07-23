@@ -1,0 +1,17 @@
+﻿<h3>Thống kê Hợp đồng</h3>
+<canvas id="hdChart"></canvas>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    new Chart(document.getElementById('hdChart'), {
+        type: 'bar',
+        data: {
+            labels: ['Còn hiệu lực', 'Hết hạn'],
+            datasets: [{
+                label: 'Hợp đồng',
+                data: [@ViewBag.HieuLuc, @ViewBag.HetHan],
+                backgroundColor: ['#28a745', '#dc3545']
+            }]
+        }
+    });
+</script>

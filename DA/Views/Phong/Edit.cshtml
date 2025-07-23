@@ -1,0 +1,42 @@
+﻿@model DA.Models.Phong
+@{
+    ViewBag.Title = "Sửa Phòng";
+    Layout = "_ChuLayout";
+}
+
+<h2>Sửa Phòng</h2>
+
+<form asp-action="Edit" method="post">
+    <input type="hidden" asp-for="MaPhong" />
+
+    <div asp-validation-summary="All" class="text-danger"></div>
+
+    <div class="mb-3">
+        <label asp-for="TenPhong"></label>
+        <input asp-for="TenPhong" class="form-control" />
+        <span asp-validation-for="TenPhong" class="text-danger"></span>
+    </div>
+    <div class="mb-3">
+        <label asp-for="LoaiPhong"></label>
+        <input asp-for="LoaiPhong" class="form-control" />
+        <span asp-validation-for="LoaiPhong" class="text-danger"></span>
+    </div>
+    <div class="mb-3">
+        <label asp-for="GiaPhong"></label>
+        <input asp-for="GiaPhong" class="form-control" type="number" />
+        <span asp-validation-for="GiaPhong" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="DienTich"></label>
+        <input asp-for="DienTich" class="form-control" type="number" />
+        <span asp-validation-for="DienTich" class="text-danger"></span>
+
+    </div>
+    <div class="mb-3">
+        <label asp-for="TrangThai"></label>
+        <input asp-for="TrangThai" class="form-control" />
+        <span asp-validation-for="TrangThai" class="text-danger"></span>
+    </div>
+    <button type="submit" class="btn btn-primary">Lưu</button>
+</form>

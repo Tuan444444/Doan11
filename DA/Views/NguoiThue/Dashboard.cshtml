@@ -1,0 +1,114 @@
+﻿@model DA.Models.TrangChuViewModel
+@{
+    Layout = "~/Views/Shared/_NguoiThueLayout.cshtml";
+}
+
+<div class="container mt-4">
+    <!-- Tổng quan thuê trọ -->
+    <h3 class="mb-4 fw-bold">📦 Tổng quan thuê trọ</h3>
+    <div class="row mb-4">
+        <div class="col-md-4 mb-3">
+            <div class="card shadow-sm h-100">
+                <div class="card-body">
+                    <h5 class="card-title">🏠 Phòng</h5>
+                    <p class="card-text fs-5">@Model.TenPhong</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 mb-3">
+            <div class="card shadow-sm h-100">
+                <div class="card-body">
+                    <h5 class="card-title">📅 Hợp đồng</h5>
+                    <p class="card-text fs-5">
+                        @Model.NgayBatDau?.ToString("dd/MM/yyyy") – @Model.NgayKetThuc?.ToString("dd/MM/yyyy")
+                    </p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 mb-3">
+            <div class="card shadow-sm h-100">
+                <div class="card-body">
+                    <h5 class="card-title">🔖 Trạng thái</h5>
+                    <p class="card-text fs-5">@Model.TrangThaiHopDong</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Thông tin chủ nhà -->
+    <h4 class="fw-bold mt-5 mb-3">👤 Thông tin chủ nhà</h4>
+    <div class="card shadow-sm mb-5">
+        <div class="card-body">
+            <p><strong>Họ tên:</strong> @Model.TenChuNha</p>
+            <p><strong>SĐT:</strong> @Model.SDTChuNha</p>
+            <p><strong>Email:</strong> @Model.EmailChuNha</p>
+        </div>
+    </div>
+
+    <!-- Biểu đồ dịch vụ -->
+    <h4 class="fw-bold mb-3">📊 Biểu đồ tiêu thụ dịch vụ</h4>
+    <div class="card shadow-sm p-4 mb-5">
+       
+        <div style="max-width: 1000px; margin: auto;">
+            <canvas id="dichVuChart" height="300"></canvas>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        const labels = @Html.Raw(Json.Serialize(Model.ThongKeDichVu.Select(x => x.ThangNam)));
+        const soDien = @Html.Raw(Json.Serialize(Model.ThongKeDichVu.Select(x => x.SoDien)));
+        const soNuoc = @Html.Raw(Json.Serialize(Model.ThongKeDichVu.Select(x => x.SoNuoc)));
+
+        const data = {
+            labels: labels,
+            datasets: [
+                {
+                    label: 'Điện (kWh)',
+                    backgroundColor: 'rgba(255, 99, 132, 0.6)',
+                    borderColor: 'rgba(255, 99, 132, 1)',
+                    borderWidth: 1,
+                    barThickness: 70,
+                    data: soDien
+                },
+                {
+                    label: 'Nước (m³)',
+                    backgroundColor: 'rgba(54, 162, 235, 0.6)',
+                    borderColor: 'rgba(54, 162, 235, 1)',
+                    borderWidth: 1,
+                    barThickness: 70,
+                    data: soNuoc
+                }
+            ]
+        };
+
+        const config = {
+            type: 'bar',
+            data: data,
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        position: 'top',
+                    },
+                    title: {
+                        display: true,
+                        text: 'Tiêu thụ điện và nước theo tháng'
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            },
+        };
+
+        new Chart(
+            document.getElementById('dichVuChart'),
+            config
+        );
+    </script>
+}

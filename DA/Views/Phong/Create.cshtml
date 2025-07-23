@@ -1,0 +1,100 @@
+﻿@model DA.Models.Phong
+
+@{
+    ViewBag.Title = "Thêm Phòng";
+    Layout = "_ChuLayout";
+}
+
+<h2 class="mt-4 mb-4 text-primary"><i class="bi bi-plus-circle"></i> Thêm Phòng Mới</h2>
+
+<form asp-action="Create" method="post" class="needs-validation" novalidate>
+    @Html.AntiForgeryToken()
+    @Html.ValidationSummary(true, "", new { @class = "alert alert-danger" })
+
+    <div class="card shadow mb-4">
+        <div class="card-header bg-primary text-white">
+            <h5 class="mb-0"><i class="bi bi-door-closed-fill"></i> Thông Tin Phòng</h5>
+        </div>
+        <div class="card-body">
+            <div class="row g-3">
+                <div class="col-md-6">
+                    <label asp-for="TenPhong" class="form-label fw-semibold">Tên Phòng</label>
+                    <input asp-for="TenPhong" class="form-control" placeholder="VD: Phòng A1" required />
+                    <div class="invalid-feedback">Vui lòng nhập tên phòng.</div>
+                </div>
+
+                <div class="col-md-6">
+                    <label asp-for="LoaiPhong" class="form-label fw-semibold">Loại Phòng</label>
+                    <input asp-for="LoaiPhong" class="form-control" placeholder="VD: 1 phòng ngủ, studio" required />
+                </div>
+
+                <div class="col-md-4">
+                    <label asp-for="GiaPhong" class="form-label fw-semibold">Giá Thuê (VNĐ)</label>
+                    <input asp-for="GiaPhong" class="form-control" type="number" step="1000" placeholder="VD: 2500000" required />
+                </div>
+
+                <div class="col-md-4">
+                    <label asp-for="DienTich" class="form-label fw-semibold">Diện Tích (m²)</label>
+                    <input asp-for="DienTich" class="form-control" type="number" step="0.1" placeholder="VD: 20" required />
+                </div>
+
+                <div class="col-md-4">
+                    <label asp-for="TrangThai" class="form-label fw-semibold">Trạng Thái</label>
+                    <select asp-for="TrangThai" class="form-select">
+                        <option value="Trống">Trống</option>
+                        <option value="Đang thuê">Đang thuê</option>
+                        <option value="Bảo trì">Bảo trì</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card shadow mb-4">
+        <div class="card-header bg-success text-white">
+            <h5 class="mb-0"><i class="bi bi-tools"></i> Dịch Vụ Đi Kèm</h5>
+        </div>
+        <div class="card-body">
+            <div class="row g-2">
+                @foreach (var dv in ViewBag.DichVus as List<DA.Models.DichVu>)
+                {
+                    <div class="col-md-4">
+                        <div class="form-check form-switch">
+                            <input type="checkbox" name="SelectedDichVus" value="@dv.MaDichVu" class="form-check-input" id="dv-@dv.MaDichVu" />
+                            <label class="form-check-label" for="dv-@dv.MaDichVu">@dv.TenDichVu</label>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+
+    <div class="d-flex justify-content-between">
+        <a asp-action="Index" class="btn btn-outline-secondary">
+            <i class="bi bi-arrow-left-circle"></i> Quay Lại
+        </a>
+        <button type="submit" class="btn btn-primary">
+            <i class="bi bi-save"></i> Lưu Phòng
+        </button>
+    </div>
+</form>
+
+@section Scripts {
+    @await Html.PartialAsync("_ValidationScriptsPartial")
+
+    <script>
+        (() => {
+            'use strict';
+            const forms = document.querySelectorAll('.needs-validation');
+            Array.from(forms).forEach(form => {
+                form.addEventListener('submit', event => {
+                    if (!form.checkValidity()) {
+                        event.preventDefault();
+                        event.stopPropagation();
+                    }
+                    form.classList.add('was-validated');
+                }, false);
+            });
+        })();
+    </script>
+}

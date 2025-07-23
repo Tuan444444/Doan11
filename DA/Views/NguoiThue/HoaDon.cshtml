@@ -1,0 +1,43 @@
+﻿@model List<DA.Models.HoaDon>
+@{
+    Layout = "~/Views/Shared/_NguoiThueLayout.cshtml";
+}
+
+<div class="card shadow-sm p-5 mx-auto" style="max-width: 1000px;">
+    <h4 class="mb-4 fw-bold">TRA CỨU HÓA ĐƠN</h4>
+
+    @if (Model.Count == 0)
+    {
+        <p>Chưa có hóa đơn nào.</p>
+    }
+    else
+    {
+        <table class="table table-bordered table-hover">
+            <thead class="table-light">
+                <tr>
+                    <th>Mã hóa đơn</th>
+                    <th>Phòng</th>
+                    <th>Ngày lập</th>
+                    <th>Tổng tiền</th>
+                    <th>Trạng thái</th>
+                    <th>Xem chi tiết</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var hd in Model)
+                {
+                    <tr>
+                        <td>@hd.MaHoaDon</td>
+                        <td>@(hd.HopDong?.Phong?.TenPhong ?? "N/A")</td>
+                        <td>@hd.NgayLap.ToString("dd/MM/yyyy")</td>
+                        <td>@String.Format("{0:N0}", hd.TongTien) đ</td>
+                        <td>@hd.TrangThaiThanhToan</td>
+                        <td>
+                            <a asp-action="ChiTietHoaDon" asp-route-id="@hd.MaHoaDon" class="btn btn-sm btn-outline-info">Chi tiết</a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+</div>

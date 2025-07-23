@@ -1,0 +1,28 @@
+﻿@model TaiKhoan
+
+@{
+    ViewData["Title"] = "Sửa tài khoản";
+}
+
+<h2>Sửa tài khoản</h2>
+
+<form asp-action="Edit" method="post">
+    <input type="hidden" asp-for="MaTaiKhoan" />
+
+    <div class="mb-3">
+        <label>Tên đăng nhập</label>
+        <input asp-for="TenDangNhap" class="form-control" />
+    </div>
+
+    <div class="mb-3">
+        <label>Loại tài khoản</label>
+        <input asp-for="LoaiTaiKhoan" class="form-control" />
+    </div>
+
+    <div class="mb-3">
+        <label>Trạng thái</label>
+        <input asp-for="TrangThai" class="form-control" />
+    </div>
+
+    <button type="submit" class="btn btn-success">Lưu thay đổi</button>
+</form>

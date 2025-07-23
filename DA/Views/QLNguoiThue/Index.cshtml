@@ -1,0 +1,59 @@
+﻿@model IEnumerable<DA.Models.NguoiThue>
+
+@{
+    Layout = "_ChuLayout";
+}
+
+<h2 class="mb-3">👥 Danh sách Người Thuê</h2>
+
+<!-- Form tìm kiếm -->
+<form asp-action="Index" method="get" class="mb-3 d-flex">
+    <input type="text" name="searchString" value="@ViewData["CurrentFilter"]" class="form-control me-2" placeholder="🔍 Tìm theo họ tên...">
+    <button type="submit" class="btn btn-primary">Tìm</button>
+    <a asp-action="Index" class="btn btn-secondary ms-2">Xóa lọc</a>
+</form>
+
+<p>
+    <a asp-action="Create" class="btn btn-success">➕ Thêm mới</a>
+</p>
+
+@if (!Model.Any())
+{
+    <div class="alert alert-warning">Không tìm thấy người thuê phù hợp.</div>
+}
+else
+{
+    <table class="table table-bordered table-striped">
+        <thead class="table-dark">
+            <tr>
+                <th>Mã</th>
+                <th>Họ tên</th>
+                <th>CCCD</th>
+                <th>SĐT</th>
+                <th>Email</th>
+                <th>Địa chỉ</th>
+                <th>Mã Tài khoản</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var nt in Model)
+            {
+                <tr>
+                    <td>@nt.MaNguoiThue</td>
+                    <td>@nt.HoTen</td>
+                    <td>@nt.CCCD</td>
+                    <td>@nt.SoDienThoai</td>
+                    <td>@nt.Email</td>
+                    <td>@nt.DiaChi</td>
+                    <td>@nt.MaTaiKhoan</td>
+                    <td>
+                        <a asp-action="Edit" asp-route-id="@nt.MaNguoiThue" class="btn btn-sm btn-warning">✏️Sửa</a>
+                        <a asp-action="Details" asp-route-id="@nt.MaNguoiThue" class="btn btn-sm btn-info">🔍Chi tiết</a>
+                        <a asp-action="Delete" asp-route-id="@nt.MaNguoiThue" class="btn btn-sm btn-danger">🗑️Xóa</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}

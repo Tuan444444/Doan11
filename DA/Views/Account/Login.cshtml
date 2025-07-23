@@ -1,0 +1,30 @@
+﻿@model DA.ViewModels.LoginViewModel
+
+<h2>Đăng nhập</h2>
+
+<form asp-action="Login" method="post">
+    @Html.AntiForgeryToken()
+
+    <!-- Hiển thị lỗi tổng quát -->
+    <div asp-validation-summary="All" class="text-danger"></div>
+
+    <!-- Tên đăng nhập -->
+    <div class="form-group">
+        <label asp-for="TenDangNhap" class="form-label"></label>
+        <input asp-for="TenDangNhap" placeholder="Tên đăng nhập" class="form-control" />
+        <span asp-validation-for="TenDangNhap" class="text-danger"></span>
+    </div>
+
+    <!-- Mật khẩu -->
+    <div class="form-group">
+        <label asp-for="MatKhau" class="form-label"></label>
+        <input asp-for="MatKhau" placeholder="Mật khẩu" type="password" class="form-control" />
+        <span asp-validation-for="MatKhau" class="text-danger"></span>
+    </div>
+
+    <button type="submit" class="btn btn-success mt-3">Đăng nhập</button>
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

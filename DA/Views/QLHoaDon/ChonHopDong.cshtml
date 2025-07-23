@@ -1,0 +1,22 @@
+﻿@{
+    ViewData["Title"] = "Chọn hợp đồng để lập hóa đơn";
+    Layout = "_ChuLayout";
+}
+
+<h3 class="mb-4">📄 Lập hóa đơn</h3>
+
+<form asp-action="ChonHopDong" method="post">
+    <div class="form-group mb-3">
+        <label for="maHopDong">Chọn phòng / khách thuê</label>
+        <select name="maHopDong" class="form-select" required>
+            <option value="">-- Vui lòng chọn --</option>
+            @foreach (var item in (List<SelectListItem>)ViewBag.HopDongs)
+            {
+                <option value="@item.Value">@item.Text</option>
+            }
+        </select>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Lập hóa đơn</button>
+    <a asp-action="Index" class="btn btn-secondary">Hủy</a>
+</form>

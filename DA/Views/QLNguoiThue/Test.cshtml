@@ -1,0 +1,17 @@
+﻿@{
+    ViewData["Title"] = "Test Form";
+    Layout = null; // Để đảm bảo layout không can thiệp khi debug
+}
+
+<h2>Form Gửi Dữ Liệu Đơn Giản</h2>
+
+<form method="post" action="/QLNguoiThue/Test">
+    @Html.AntiForgeryToken()
+
+    <div class="mb-2">
+        <label for="HoTen">Họ tên:</label>
+        <input type="text" name="HoTen" class="form-control" />
+    </div>
+
+    <button type="submit" class="btn btn-primary">Gửi</button>
+</form>

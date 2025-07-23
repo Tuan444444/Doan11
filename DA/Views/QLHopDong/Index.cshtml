@@ -1,0 +1,50 @@
+﻿@model IEnumerable<DA.Models.HopDong>
+
+@{
+    ViewData["Title"] = "Danh sách hợp đồng";
+    Layout = "_ChuLayout";
+}
+<div class="container mt-5">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h2 class="mb-0 text-primary">📄 Danh sách hợp đồng</h2>
+        <a asp-action="Create" class="btn btn-success">
+            ➕ Thêm hợp đồng mới
+        </a>
+    </div>
+
+    <table class="table table-hover table-bordered table-striped shadow-sm rounded">
+        <thead class="table-dark">
+            <tr class="text-center">
+                <th>@Html.DisplayNameFor(model => model.MaNguoiThue)</th>
+                <th>@Html.DisplayNameFor(model => model.MaPhong)</th>
+                <th>@Html.DisplayNameFor(model => model.NgayBatDau)</th>
+                <th>@Html.DisplayNameFor(model => model.NgayKetThuc)</th>
+                <th>@Html.DisplayNameFor(model => model.TienDatCoc)</th>
+                <th>@Html.DisplayNameFor(model => model.TrangThai)</th>
+                <th>Thao tác</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr class="text-center align-middle">
+                    <td>@Html.DisplayFor(modelItem => item.MaNguoiThue)</td>
+                    <td>@Html.DisplayFor(modelItem => item.MaPhong)</td>
+                    <td>@item.NgayBatDau?.ToString("dd/MM/yyyy")</td>
+                    <td>@item.NgayKetThuc?.ToString("dd/MM/yyyy")</td>
+                    <td>@String.Format("{0:N0} đ", item.TienDatCoc)</td>
+                    <td>
+                        <span class="badge @(item.TrangThai == "Đang hiệu lực" ? "bg-success" : "bg-secondary")">
+                            @item.TrangThai
+                        </span>
+                    </td>
+                    <td>
+                        <a asp-action="Edit" asp-route-id="@item.MaHopDong" class="btn btn-sm btn-warning">✏️ Sửa</a>
+                        <a asp-action="Details" asp-route-id="@item.MaHopDong" class="btn btn-sm btn-info text-white">👁️ Xem</a>
+                        <a asp-action="Delete" asp-route-id="@item.MaHopDong" class="btn btn-sm btn-danger" onclick="return confirm('Bạn có chắc muốn xoá?')">🗑️ Xoá</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

@@ -1,0 +1,104 @@
+﻿@model DA.ViewModels.HoaDonCreateViewModel
+@{
+    ViewData["Title"] = "Tạo hóa đơn";
+    Layout = "_ChuLayout";
+}
+
+<h3 class="text-primary mb-3">🧾 Tạo hóa đơn cho hợp đồng @Model.MaHopDong</h3>
+
+<form asp-action="TaoHoaDon" method="post">
+    @Html.AntiForgeryToken()
+
+    <input type="hidden" name="MaHopDong" value="@Model.MaHopDong" />
+    <input type="hidden" name="GiaPhong" value="@Model.GiaPhong.ToString(System.Globalization.CultureInfo.InvariantCulture)" />
+    <input type="hidden" name="TenNguoiThue" value="@Model.TenNguoiThue" />
+    <input type="hidden" name="TenPhong" value="@Model.TenPhong" />
+
+    <div class="mb-3"><strong>Người thuê:</strong> @Model.TenNguoiThue</div>
+    <div class="mb-3"><strong>Phòng:</strong> @Model.TenPhong</div>
+    <div class="mb-3"><strong>Tiền phòng:</strong> @Model.GiaPhong.ToString("N0") VNĐ</div>
+
+    <div asp-validation-summary="All" class="text-danger"></div>
+
+    <h5 class="mt-4">🔌 Nhập chỉ số / số lượng dịch vụ</h5>
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>Dịch vụ</th>
+                <th>Đơn giá</th>
+                <th>Chỉ số cũ</th>
+                <th>Chỉ số mới</th>
+                <th>Số lượng</th>
+            </tr>
+        </thead>
+        <tbody>
+            @for (int i = 0; i < Model.DichVus.Count; i++)
+            {
+                var dv = Model.DichVus[i];
+                bool isChiSo = dv.TenDichVu?.ToLower().Contains("điện") == true || dv.TenDichVu?.ToLower().Contains("nước") == true;
+                <tr>
+                    <td>
+                        @dv.TenDichVu
+                        <input type="hidden" name="DichVus[@i].MaDichVu" value="@dv.MaDichVu" />
+                        <input type="hidden" name="DichVus[@i].TenDichVu" value="@dv.TenDichVu" />
+                    </td>
+                    <td>
+                        @dv.DonGia.ToString("N0") VNĐ
+                        <input type="hidden" name="DichVus[@i].DonGia" value="@dv.DonGia.ToString(System.Globalization.CultureInfo.InvariantCulture)" />
+                    </td>
+                    <td>
+                        @if (isChiSo)
+                        {
+                            <input type="number" class="form-control"
+                                   name="DichVus[@i].ChiSoCu"
+                                   value="@dv.ChiSoCu.ToString(System.Globalization.CultureInfo.InvariantCulture)"
+                                   readonly />
+                        }
+                        else
+                        {
+                            <input type="hidden" name="DichVus[@i].ChiSoCu" value="0" />
+                            <span class="text-muted">—</span>
+                        }
+                    </td>
+                    <td>
+                        @if (isChiSo)
+                        {
+                            <input type="number" class="form-control"
+                                   name="DichVus[@i].ChiSoMoi"
+                                   step="0.01" required />
+                        }
+                        else
+                        {
+                            <input type="hidden" name="DichVus[@i].ChiSoMoi" value="0" />
+                            <span class="text-muted">—</span>
+                        }
+                    </td>
+                    <td>
+                        @if (!isChiSo)
+                        {
+                            <input type="number" class="form-control"
+                                   name="DichVus[@i].SoLuong"
+                                   value="@dv.SoLuong?.ToString(System.Globalization.CultureInfo.InvariantCulture) ?? " 1""
+                                   min="0" step="0.01" />
+                        }
+                        else
+                        {
+                            <input type="hidden" name="DichVus[@i].SoLuong" value="0" />
+                            <span class="text-muted">—</span>
+                        }
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    <div class="mb-3">
+        <label for="PhiKhac">Phí khác (nếu có):</label>
+        <input type="number" class="form-control" name="PhiKhac"
+               value="@Model.PhiKhac.ToString(System.Globalization.CultureInfo.InvariantCulture)"
+               step="1000" min="0" />
+    </div>
+
+    <button type="submit" class="btn btn-primary">💾 Tạo hóa đơn</button>
+    <a asp-action="Index" class="btn btn-secondary">⬅️ Quay lại</a>
+</form>

@@ -1,0 +1,70 @@
+﻿@{
+    var tong = ViewBag.TongSoPhong;
+    var trong = ViewBag.SoPhongTrong;
+    var thue = ViewBag.SoPhongDangThue;
+    var baotri = ViewBag.SoPhongBaoTri;
+    var loaiPhongData = ViewBag.LoaiPhongData;
+}
+
+<div class="container mt-5">
+    <h2>Thống kê Phòng</h2>
+    <ul>
+        <li><strong>Tổng số phòng:</strong> @tong</li>
+        <li><strong>Phòng trống:</strong> @trong</li>
+        <li><strong>Phòng đang thuê:</strong> @thue</li>
+        <li><strong>Phòng bảo trì:</strong> @baotri</li>
+    </ul>
+
+    <h4>Biểu đồ Trạng Thái Phòng</h4>
+    <canvas id="statusChart"></canvas>
+
+    <h4 class="mt-4">Biểu đồ Loại Phòng</h4>
+    <canvas id="typeChart"></canvas>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    const ctx1 = document.getElementById('statusChart').getContext('2d');
+    new Chart(ctx1, {
+        type: 'pie',
+        data: {
+            labels: ['Trống', 'Đang thuê', 'Bảo trì'],
+            datasets: [{
+                data: [@trong, @thue, @baotri],
+                backgroundColor: ['#4BC0C0', '#FF6384', '#FFCE56']
+            }]
+        },
+        options: {
+            responsive: true
+        }
+    });
+
+    const ctx2 = document.getElementById('typeChart').getContext('2d');
+    new Chart(ctx2, {
+        type: 'bar',
+        data: {
+            labels: [
+    @foreach (var item in loaiPhongData)
+    {
+        @($"'{item.LoaiPhong}',")
+    }
+            ],
+            datasets: [{
+                label: 'Số lượng',
+                data: [
+    @foreach (var item in loaiPhongData)
+    {
+        @($"{item.SoLuong},")
+    }
+                ],
+                backgroundColor: '#36A2EB'
+            }]
+        },
+        options: {
+            responsive: true,
+            scales: {
+                y: { beginAtZero: true }
+            }
+        }
+    });
+</script>

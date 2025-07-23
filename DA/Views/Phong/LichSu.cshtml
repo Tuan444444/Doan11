@@ -1,0 +1,30 @@
+﻿@model IEnumerable<DA.Models.LichSuLuuTru>
+@{
+    ViewBag.Title = "Lịch sử Lưu trú";
+}
+@{
+    Layout = "_ChuLayout";
+}
+<h2>Lịch sử Lưu trú</h2>
+
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>Phòng</th>
+            <th>Người thuê</th>
+            <th>Ngày bắt đầu</th>
+            <th>Ngày kết thúc</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var ls in Model)
+        {
+            <tr>
+                <td>@ls.Phong.TenPhong</td>
+                <td>@ls.NguoiThue.HoTen</td>
+                <td>@ls.NgayBatDau.ToShortDateString()</td>
+                <td>@ls.NgayKetThuc.ToShortDateString()</td>
+            </tr>
+        }
+    </tbody>
+</table>

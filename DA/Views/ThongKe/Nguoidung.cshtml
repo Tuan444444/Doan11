@@ -1,0 +1,43 @@
+﻿@{
+    ViewData["Title"] = "Thống kê người dùng";
+}
+
+<div class="container mt-5">
+    <h2>Thống kê số lượng người dùng</h2>
+
+    <ul>
+        <li><strong>Số lượng Chủ nhà:</strong> @ViewBag.ChuNha</li>
+        <li><strong>Số lượng Người thuê:</strong> @ViewBag.NguoiThue</li>
+        <li><strong>Số lượng Admin:</strong> @ViewBag.Admin</li>
+    </ul>
+
+    <canvas id="userChart" width="400" height="200"></canvas>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+    const ctx = document.getElementById('userChart');
+
+    new Chart(ctx, {
+        type: 'bar', // Hoặc 'pie'
+        data: {
+            labels: ['Chủ nhà', 'Người thuê', 'Admin'],
+            datasets: [{
+                label: 'Số lượng người dùng',
+                data: [@ViewBag.ChuNha, @ViewBag.NguoiThue, @ViewBag.Admin],
+                backgroundColor: ['#36A2EB', '#FF6384', '#4BC0C0'],
+                borderWidth: 1
+            }]
+        },
+        options: {
+            responsive: true,
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    stepSize: 1
+                }
+            }
+        }
+    });
+</script>

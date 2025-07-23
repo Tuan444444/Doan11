@@ -1,0 +1,26 @@
+﻿@model DA.Models.NguoiThue
+@{
+    ViewData["Title"] = "Xóa Người Thuê"; Layout = "_ChuLayout";
+}
+
+<h2 class="text-danger">Bạn chắc chắn muốn xóa người thuê này?</h2>
+<hr />
+<div class="border p-3 rounded bg-light">
+    <dl class="row">
+        <dt class="col-sm-3">Họ tên</dt>
+        <dd class="col-sm-9">@Model.HoTen</dd>
+
+        <dt class="col-sm-3">SĐT</dt>
+        <dd class="col-sm-9">@Model.SoDienThoai</dd>
+
+        <dt class="col-sm-3">Email</dt>
+        <dd class="col-sm-9">@Model.Email</dd>
+    </dl>
+
+    <form asp-action="Delete" method="post">
+        @Html.AntiForgeryToken()
+        <input type="hidden" asp-for="MaNguoiThue" />
+        <button type="submit" class="btn btn-danger">Xác nhận xóa</button>
+        <a asp-action="Index" class="btn btn-secondary">Hủy</a>
+    </form>
+</div>

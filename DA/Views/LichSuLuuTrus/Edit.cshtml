@@ -1,0 +1,30 @@
+﻿@model DA.Models.LichSuLuuTru
+@{
+    ViewBag.Title = "Sửa lịch sử";
+    Layout = "_ChuLayout";
+}
+
+<h2 class="mt-3">✏️ Sửa lịch sử lưu trú</h2>
+
+<form asp-action="Edit" method="post">
+    <input type="hidden" asp-for="MaLichSu" />
+    <div class="mb-3">
+        <label class="form-label">Người thuê</label>
+        <select asp-for="MaNguoiThue" class="form-select" asp-items="ViewBag.NguoiThues"></select>
+    </div>
+    <div class="mb-3">
+        <label class="form-label">Phòng</label>
+        <select asp-for="MaPhong" class="form-select" asp-items="ViewBag.Phongs"></select>
+    </div>
+    <div class="mb-3">
+        <label class="form-label">Ngày bắt đầu</label>
+        <input asp-for="NgayBatDau" class="form-control" type="date" />
+    </div>
+    <div class="mb-3">
+        <label class="form-label">Ngày kết thúc</label>
+        <input asp-for="NgayKetThuc" class="form-control" type="date" />
+    </div>
+
+    <button type="submit" class="btn btn-primary">💾 Cập nhật</button>
+    <a asp-action="Index" class="btn btn-secondary">⬅️ Quay lại</a>
+</form>

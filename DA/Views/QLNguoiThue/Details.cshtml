@@ -1,0 +1,29 @@
+﻿@model DA.Models.NguoiThue
+@{
+    ViewData["Title"] = "Chi tiết Người Thuê"; Layout = "_ChuLayout";
+}
+
+<h2>Chi tiết Người Thuê</h2>
+<div class="border p-3">
+    <dl class="row">
+        <dt class="col-sm-3">Họ tên</dt>
+        <dd class="col-sm-9">@Model.HoTen</dd>
+
+        <dt class="col-sm-3">CCCD</dt>
+        <dd class="col-sm-9">@Model.CCCD</dd>
+
+        <dt class="col-sm-3">SĐT</dt>
+        <dd class="col-sm-9">@Model.SoDienThoai</dd>
+
+        <dt class="col-sm-3">Email</dt>
+        <dd class="col-sm-9">@Model.Email</dd>
+
+        <dt class="col-sm-3">Địa chỉ</dt>
+        <dd class="col-sm-9">@Model.DiaChi</dd>
+
+        <dt class="col-sm-3">Tài khoản</dt>
+        <dd class="col-sm-9">@Model.MaTaiKhoan</dd>
+    </dl>
+    <a asp-action="Edit" asp-route-id="@Model.MaNguoiThue" class="btn btn-warning">Sửa</a>
+    <a asp-action="Index" class="btn btn-secondary">Quay lại</a>
+</div>

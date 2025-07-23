@@ -1,0 +1,42 @@
+﻿@model DA.Models.Phong
+@{
+    Layout = "~/Views/Shared/_NguoiThueLayout.cshtml";
+}
+
+<div class="card shadow-sm p-5 mx-auto" style="max-width: 1000px;">
+    <h4 class="mb-4 fw-bold">THÔNG TIN PHÒNG</h4>
+
+    <div class="row mb-4 align-items-center">
+        <label class="col-sm-2 col-form-label">Tên phòng</label>
+        <div class="col-sm-10">
+            <input class="form-control" value="@Model.TenPhong" readonly />
+        </div>
+    </div>
+
+    <div class="row mb-4 align-items-center">
+        <label class="col-sm-2 col-form-label">Loại phòng</label>
+        <div class="col-sm-10">
+            <input class="form-control" value="@Model.LoaiPhong" readonly />
+        </div>
+    </div>
+
+    <div class="row mb-4 align-items-center">
+        <label class="col-sm-2 col-form-label">Trạng thái</label>
+        <div class="col-sm-10">
+            <input class="form-control" value="@Model.TrangThai" readonly />
+        </div>
+    </div>
+
+    <div class="row mb-4 align-items-center">
+        <label class="col-sm-2 col-form-label">Diện tích</label>
+        <div class="col-sm-10">
+            <input class="form-control" value="@Model.DienTich m²" readonly />
+        </div>
+    </div>
+
+    <div class="row mb-4 align-items-center">
+        <label class="col-sm-2 col-form-label">Giá phòng</label>
+        <div class="col-sm-10">
+            <input class="form-control" value="@Model.GiaPhong.ToString("N0") VNĐ" readonly />
+        </div>
+    </div>

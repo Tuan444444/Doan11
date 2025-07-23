@@ -1,0 +1,35 @@
+﻿@model DA.Models.HoaDon
+
+@{
+    ViewData["Title"] = "Xóa hóa đơn";
+}
+
+<h2 class="text-danger">Xóa hóa đơn</h2>
+
+<h5>Bạn có chắc chắn muốn xóa hóa đơn sau?</h5>
+<hr />
+
+<div>
+    <dl class="row">
+        <dt class="col-sm-3">Mã hóa đơn</dt>
+        <dd class="col-sm-9">@Model.MaHoaDon</dd>
+
+        <dt class="col-sm-3">Mã hợp đồng</dt>
+        <dd class="col-sm-9">@Model.MaHopDong</dd>
+
+        <dt class="col-sm-3">Ngày lập</dt>
+        <dd class="col-sm-9">@Model.NgayLap.ToString("yyyy-MM-dd")</dd>
+
+        <dt class="col-sm-3">Tổng tiền</dt>
+        <dd class="col-sm-9">@string.Format("{0:N0} VNĐ", Model.TongTien ?? 0)</dd>
+
+        <dt class="col-sm-3">Trạng thái thanh toán</dt>
+        <dd class="col-sm-9">@Model.TrangThaiThanhToan</dd>
+    </dl>
+
+    <form asp-action="DeleteConfirmed" method="post">
+        <input type="hidden" asp-for="MaHoaDon" />
+        <button type="submit" class="btn btn-danger">Xóa</button>
+        <a asp-action="Index" class="btn btn-secondary">Hủy</a>
+    </form>
+</div>

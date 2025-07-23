@@ -1,0 +1,66 @@
+﻿@model IEnumerable<DA.Models.HoaDon>
+@{
+    Layout = "_ChuLayout";
+    ViewData["Title"] = "Danh sách Hóa đơn";
+}
+
+<h2 class="mt-3 mb-4 text-primary">📄 Danh sách Hóa đơn</h2>
+
+<a asp-action="ChonHopDong" class="btn btn-success mb-3">
+    ➕ Lập hóa đơn mới
+</a>
+
+@if (TempData["Message"] != null)
+{
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+        @TempData["Message"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+}
+
+<table class="table table-bordered table-hover shadow-sm">
+    <thead class="table-light">
+        <tr>
+            <th scope="col">Mã hóa đơn</th>
+            <th scope="col">Ngày lập</th>
+            <th scope="col">Tổng tiền (VNĐ)</th>
+            <th scope="col">Trạng thái</th>
+            <th scope="col">Hành động</th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (Model != null && Model.Any())
+        {
+            foreach (var item in Model)
+            {
+                <tr>
+                    <td>@item.MaHoaDon</td>
+                    <td>@item.NgayLap.ToString("dd/MM/yyyy")</td>
+                    <td>@(string.Format("{0:N0} ₫", item.TongTien ?? 0))</td>
+
+                    <td>
+                        <span class="badge @(item.TrangThaiThanhToan == "Đã thanh toán" ? "bg-success" : "bg-warning text-dark")">
+                            @item.TrangThaiThanhToan
+                        </span>
+                    </td>
+                    <td>
+                        <a asp-action="Details" asp-route-id="@item.MaHoaDon" class="btn btn-sm btn-info me-1">
+                            📋 Chi tiết
+                        </a>
+                        <a asp-action="Delete" asp-route-id="@item.MaHoaDon"
+                           class="btn btn-sm btn-danger">
+                            🗑️ Xóa
+                        </a>
+
+                    </td>
+                </tr>
+            }
+        }
+        else
+        {
+            <tr>
+                <td colspan="5" class="text-center text-muted">Chưa có hóa đơn nào trong hệ thống.</td>
+            </tr>
+        }
+    </tbody>
+</table>

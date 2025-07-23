@@ -1,0 +1,23 @@
+﻿@{
+    ViewData["Title"] = "Thống kê Doanh thu";
+}
+
+<h3>💵 Thống kê Doanh thu</h3>
+<p>Tổng Doanh thu: <strong>@String.Format("{0:N0}", ViewBag.DoanhThu) VNĐ</strong></p>
+
+<canvas id="doanhThuChart"></canvas>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    new Chart(document.getElementById('doanhThuChart'), {
+        type: 'bar',
+        data: {
+            labels: ['Tổng Doanh thu'],
+            datasets: [{
+                label: 'Doanh thu',
+                data: [@ViewBag.DoanhThu],
+                backgroundColor: '#fd7e14'
+            }]
+        }
+    });
+</script>

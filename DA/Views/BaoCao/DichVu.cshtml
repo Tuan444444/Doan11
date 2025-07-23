@@ -1,0 +1,22 @@
+﻿@{
+    ViewData["Title"] = "Thống kê Dịch vụ";
+}
+
+<h3>🔌 Thống kê Dịch vụ tiêu thụ</h3>
+
+<canvas id="dichVuChart"></canvas>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    new Chart(document.getElementById('dichVuChart'), {
+        type: 'bar',
+        data: {
+            labels: @Html.Raw(Json.Serialize(ViewBag.DichVuTen)),
+            datasets: [{
+                label: 'Số lượng tiêu thụ',
+                data: @Html.Raw(Json.Serialize(ViewBag.DichVuSoLuong)),
+                backgroundColor: '#6610f2'
+            }]
+        }
+    });
+</script>

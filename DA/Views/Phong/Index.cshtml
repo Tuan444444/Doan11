@@ -1,0 +1,55 @@
+﻿@model IEnumerable<DA.Models.Phong>
+
+@{
+    Layout = "_ChuLayout";
+}
+
+<h2 class="mt-3">📋 Quản lý Phòng</h2>
+
+<form method="get" class="row g-3 mb-3">
+    <div class="col-auto">
+        <input type="text" name="search" value="@ViewBag.Search" class="form-control" placeholder="Nhập tên phòng..." />
+    </div>
+    <div class="col-auto">
+        @Html.DropDownList("TrangThai", new SelectList(
+        new List<string> { "Tất cả", "Trống", "Đang thuê", "Bảo trì" }, ViewBag.TrangThai as string),
+                "Chọn trạng thái", new { @class = "form-select" })
+    </div>
+    <div class="col-auto">
+        <button type="submit" class="btn btn-primary">🔍 Tìm kiếm</button>
+    </div>
+</form>
+
+<div class="mb-3">
+    <a asp-action="Create" class="btn btn-success">➕ Thêm Phòng</a>
+</div>
+
+<table class="table table-bordered table-striped">
+    <thead class="table-dark">
+        <tr>
+            <th>Tên Phòng</th>
+            <th>Loại Phòng</th>
+            <th>Giá (VNĐ)</th>
+            <th>Diện Tích (m²)</th>
+            <th>Trạng Thái</th>
+            <th style="width: 160px;">Chức năng</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var p in Model)
+        {
+            <tr>
+                <td>@p.TenPhong</td>
+                <td>@p.LoaiPhong</td>
+                <td>@p.GiaPhong.ToString("N0") đ</td>
+                <td>@p.DienTich</td>
+                <td>@p.TrangThai</td>
+                <td>
+                    <a asp-action="Edit" asp-route-id="@p.MaPhong" class="btn btn-warning btn-sm">✏️ Sửa</a>
+                    <a asp-action="Delete" asp-route-id="@p.MaPhong" class="btn btn-danger btn-sm"
+                       onclick="return confirm('Bạn có chắc chắn muốn xóa phòng này không?');">🗑️ Xóa</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

@@ -1,0 +1,133 @@
+﻿@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="utf-8" />
+    <title>@ViewData["Title"] - Người thuê</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <!-- Bootstrap + Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" />
+
+    <style>
+        body {
+            font-family: 'Segoe UI', sans-serif;
+        }
+
+        .sidebar {
+            height: 100vh;
+            background-color: #2c3e50;
+            color: white;
+        }
+
+            .sidebar a {
+                color: white;
+                text-decoration: none;
+                padding: 10px 15px;
+                display: block;
+            }
+
+                .sidebar a:hover,
+                .sidebar a.active {
+                    background-color: #1abc9c;
+                }
+
+            .sidebar .list-group-item {
+                background-color: transparent;
+                border: none;
+                color: white;
+            }
+
+                .sidebar .list-group-item:hover {
+                    background-color: #1abc9c;
+                }
+
+        .header {
+            padding: 15px;
+            background-color: #f8f9fa;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .content {
+            padding: 20px;
+        }
+
+        .toggle-icon {
+            transition: transform 0.3s ease;
+        }
+
+        .rotate-icon {
+            transform: rotate(180deg);
+        }
+    </style>
+</head>
+<body>
+    <div class="container-fluid">
+        <div class="row">
+            <!-- Sidebar -->
+            <nav class="col-md-3 col-lg-2 sidebar">
+                <h4 class="p-3">🧑 Người thuê</h4>
+                <a href="/NguoiThue/Dashboard" class="active">🏠 Trang chủ</a>
+                <a href="/NguoiThue/ThongTinCaNhan">📋 Thông tin cá nhân</a>
+                <a href="/NguoiThue/TaiKhoan">🔐 Thông tin tài khoản</a>
+
+                <div class="list-group">
+                    <a class="list-group-item d-flex justify-content-between align-items-center"
+                       data-bs-toggle="collapse"
+                       href="#luuTruCollapse"
+                       role="button"
+                       aria-expanded="false"
+                       aria-controls="luuTruCollapse"
+                       onclick="toggleIcon(this)">
+                        🏠 Thông tin lưu trú
+                        <i class="bi bi-chevron-down toggle-icon"></i>
+                    </a>
+                    <div class="collapse ps-4" id="luuTruCollapse">
+                        <a href="/NguoiThue/ThongTinPhong" class="list-group-item">📌 Thông tin phòng</a>
+                        <a href="/NguoiThue/ThongTinHopDong" class="list-group-item">📄 Thông tin hợp đồng</a>
+                    </div>
+                </div>
+
+                <a href="/NguoiThue/HoaDon">💵 Tra cứu hóa đơn</a>
+                <a href="/NguoiThue/PhanHoi">🛠️ Gửi phản hồi</a>
+                <a href="javascript:void(0);" class="nav-link text-danger" onclick="confirmDangXuat()">
+                    <i class="bi bi-box-arrow-right"></i> Đăng xuất
+                </a>
+            </nav>
+
+            <!-- Nội dung chính -->
+            <main class="col-md-9 col-lg-10">
+                <div class="header">
+                    <h5>@ViewData["Title"]</h5>
+                </div>
+                <div class="content">
+                    @RenderBody()
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <!-- Bootstrap Bundle -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Scripts -->
+    <script>
+        function toggleIcon(element) {
+            const icon = element.querySelector('.toggle-icon');
+            icon.classList.toggle('rotate-icon');
+        }
+
+        function confirmDangXuat() {
+            if (confirm("Bạn có chắc chắn muốn đăng xuất không?")) {
+                window.location.href = '@Url.Action("DangXuat", "Account")';
+            }
+        }
+    </script>
+    @RenderSection("Scripts", required: false)
+</body>
+</html>

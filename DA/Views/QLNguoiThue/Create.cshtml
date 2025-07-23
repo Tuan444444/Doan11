@@ -1,0 +1,56 @@
+﻿@model DA.Models.NguoiThue
+@{
+    ViewData["Title"] = "Thêm Người Thuê"; Layout = "_ChuLayout";
+}
+
+<h2>Thêm Người Thuê</h2>
+<hr />
+
+<form asp-action="Create" method="post">
+    @Html.AntiForgeryToken()
+
+     <div class="form-group mb-2"> 
+         <label asp-for="MaTaiKhoan"></label> 
+         <select asp-for="MaTaiKhoan" asp-items="ViewBag.MaTaiKhoan" class="form-control"></select> 
+         <span asp-validation-for="MaTaiKhoan" class="text-danger"></span> 
+     </div> 
+
+    <div class="form-group mb-2">
+        <label asp-for="HoTen"></label>
+        <input asp-for="HoTen" class="form-control" />
+        <span asp-validation-for="HoTen" class="text-danger"></span>
+    </div>
+
+    <div class="form-group mb-2">
+        <label asp-for="CCCD"></label>
+        <input asp-for="CCCD" class="form-control" />
+        <span asp-validation-for="CCCD" class="text-danger"></span>
+    </div>
+
+    <div class="form-group mb-2">
+        <label asp-for="SoDienThoai"></label>
+        <input asp-for="SoDienThoai" class="form-control" />
+        <span asp-validation-for="SoDienThoai" class="text-danger"></span>
+    </div>
+
+    <div class="form-group mb-2">
+        <label asp-for="Email"></label>
+        <input asp-for="Email" class="form-control" />
+        <span asp-validation-for="Email" class="text-danger"></span>
+    </div>
+
+    <div class="form-group mb-3">
+        <label asp-for="DiaChi"></label>
+        <input asp-for="DiaChi" class="form-control" />
+        <span asp-validation-for="DiaChi" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <button type="submit" class="btn btn-primary">Thêm</button>
+        <a asp-action="Index" class="btn btn-secondary">Quay lại</a>
+    </div>
+</form>
+
+@section Scripts {
+    @await Html.PartialAsync("_ValidationScriptsPartial")
+}

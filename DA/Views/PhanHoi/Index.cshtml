@@ -1,0 +1,43 @@
+﻿@model IEnumerable<DA.Models.PhanHoi>
+
+@{
+    ViewData["Title"] = "Danh sách phản hồi";
+    Layout = "_ChuLayout"; // đảm bảo bạn đã dùng layout có Bootstrap
+}
+
+<div class="container mt-5">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h2 class="text-primary">📬 Danh sách phản hồi</h2>
+        <a asp-action="Create" class="btn btn-success">➕ Gửi phản hồi mới</a>
+    </div>
+
+    <table class="table table-hover table-bordered table-striped shadow-sm rounded">
+        <thead class="table-dark text-center">
+            <tr>
+                <th>@Html.DisplayNameFor(model => model.NoiDung)</th>
+                <th>@Html.DisplayNameFor(model => model.NgayGui)</th>
+                <th>@Html.DisplayNameFor(model => model.KetQuaXuLy)</th>
+                <th>@Html.DisplayNameFor(model => model.NgayXuLy)</th>
+                <th>@Html.DisplayNameFor(model => model.NguoiThue)</th>
+                <th>Thao tác</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr class="text-center align-middle">
+                    <td class="text-start">@item.NoiDung</td>
+                    <td>@item.NgayGui?.ToString("dd/MM/yyyy")</td>
+                    <td class="text-success">@item.KetQuaXuLy</td>
+                    <td>@item.NgayXuLy?.ToString("dd/MM/yyyy")</td>
+                    <td>@item.NguoiThue?.CCCD</td>
+                    <td>
+                        <a asp-action="Edit" asp-route-id="@item.MaPhanHoi" class="btn btn-sm btn-warning">✏️ Sửa</a>
+                        <a asp-action="Details" asp-route-id="@item.MaPhanHoi" class="btn btn-sm btn-info text-white">👁️ Xem</a>
+                        <a asp-action="Delete" asp-route-id="@item.MaPhanHoi" class="btn btn-sm btn-danger" onclick="return confirm('Bạn có chắc muốn xoá phản hồi này?')">🗑️ Xoá</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

@@ -1,0 +1,51 @@
+﻿0@model IEnumerable<TaiKhoan>
+
+@{
+    ViewData["Title"] = "Quản lý tài khoản";
+}
+
+<h2>Danh sách tài khoản</h2>
+
+<form method="get" class="mb-3">
+    <input name="search" placeholder="Tìm kiếm tên đăng nhập..." value="@Context.Request.Query["search"]" />
+    <button type="submit" class="btn btn-primary">Tìm</button>
+</form>
+
+@if (TempData["Message"] != null)
+{
+    <div class="alert alert-success">@TempData["Message"]</div>
+}
+
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Tên đăng nhập</th>
+            <th>Loại tài khoản</th>
+            <th>Trạng thái</th>
+            <th>Ngày tạo</th>
+            <th>Hành động</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@item.MaTaiKhoan</td>
+                <td>@item.TenDangNhap</td>
+                <td>@item.LoaiTaiKhoan</td>
+                <td>@item.TrangThai</td>
+                <td>@item.NgayTao.ToString("dd/MM/yyyy")</td>
+                <td>
+                    <a asp-action="Edit" asp-route-id="@item.MaTaiKhoan" class="btn btn-sm btn-warning">Sửa</a>
+                    <a asp-action="Delete" asp-route-id="@item.MaTaiKhoan"
+                       onclick="return confirm('Xác nhận xoá tài khoản?');"
+                       class="btn btn-sm btn-danger">Xoá</a>
+                    <a asp-action="ResetPassword" asp-route-id="@item.MaTaiKhoan"
+                       onclick="return confirm('Reset mật khẩu về 123456?');"
+                       class="btn btn-sm btn-secondary">Reset mật khẩu</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

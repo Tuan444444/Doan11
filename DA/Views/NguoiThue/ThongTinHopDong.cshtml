@@ -1,0 +1,57 @@
+﻿@model DA.Models.HopDong
+@{
+    Layout = "~/Views/Shared/_NguoiThueLayout.cshtml";
+}
+
+<div class="card shadow-sm p-5 mx-auto" style="max-width: 1000px;">
+    <h4 class="mb-4 fw-bold">THÔNG TIN HỢP ĐỒNG</h4>
+
+    @if (TempData["Message"] != null)
+    {
+        <div class="alert alert-success">@TempData["Message"]</div>
+    }
+
+    <form>
+        <div class="row mb-4 align-items-center">
+            <label class="col-sm-2 col-form-label">Mã hợp đồng</label>
+            <div class="col-sm-10">
+                <input class="form-control" value="@Model.MaHopDong" readonly />
+            </div>
+        </div>
+
+        <div class="row mb-4 align-items-center">
+            <label class="col-sm-2 col-form-label">Tên phòng</label>
+            <div class="col-sm-10">
+                <input class="form-control" value="@Model.Phong?.TenPhong" readonly />
+            </div>
+        </div>
+
+        <div class="row mb-4 align-items-center">
+            <label class="col-sm-2 col-form-label">Ngày bắt đầu</label>
+            <div class="col-sm-10">
+                <input class="form-control" value="@Model.NgayBatDau?.ToString("dd/MM/yyyy")" readonly />
+            </div>
+        </div>
+
+        <div class="row mb-4 align-items-center">
+            <label class="col-sm-2 col-form-label">Ngày kết thúc</label>
+            <div class="col-sm-10">
+                <input class="form-control" value="@Model.NgayKetThuc?.ToString("dd/MM/yyyy")" readonly />
+            </div>
+        </div>
+
+        <div class="row mb-4 align-items-center">
+            <label class="col-sm-2 col-form-label">Tiền đặt cọc</label>
+            <div class="col-sm-10">
+                <input class="form-control" value="@Model.TienDatCoc.ToString("N0") + " VNĐ"" readonly />
+            </div>
+        </div>
+
+        <div class="row mb-4 align-items-center">
+            <label class="col-sm-2 col-form-label">Trạng thái</label>
+            <div class="col-sm-10">
+                <input class="form-control" value="@Model.TrangThai" readonly />
+            </div>
+        </div>
+    </form>
+</div>

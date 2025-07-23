@@ -1,0 +1,23 @@
+﻿@{
+    ViewData["Title"] = "Thống kê Người thuê";
+}
+
+<h3>👥 Thống kê Người thuê</h3>
+<p>Tổng số người thuê: <strong>@ViewBag.TongNguoiThue</strong></p>
+
+<canvas id="nguoiThueChart"></canvas>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    new Chart(document.getElementById('nguoiThueChart'), {
+        type: 'bar',
+        data: {
+            labels: ['Người thuê'],
+            datasets: [{
+                label: 'Số lượng',
+                data: [@ViewBag.TongNguoiThue],
+                backgroundColor: '#007bff'
+            }]
+        }
+    });
+</script>
