@@ -18,61 +18,45 @@ namespace DA.Controllers
         // Danh sách phòng
         public IActionResult Index(string search, string trangThai)
         {
-            // Lấy MaChuNha từ Session
             int? MaChuNha = HttpContext.Session.GetInt32("MaChuNha");
 
             if (MaChuNha == null)
-            {
-                // Chưa đăng nhập thì quay về login
                 return RedirectToAction("Login", "Account");
-            }
 
             var dsPhong = _context.Phongs.Where(p => p.MaChuNha == MaChuNha);
 
             if (!string.IsNullOrEmpty(search))
-            {
                 dsPhong = dsPhong.Where(p => p.TenPhong.Contains(search));
-            }
 
             if (!string.IsNullOrEmpty(trangThai) && trangThai != "Tất cả")
-            {
                 dsPhong = dsPhong.Where(p => p.TrangThai == trangThai);
-            }
 
             ViewBag.Search = search;
             ViewBag.TrangThai = trangThai;
 
+            ViewBag.Success = TempData["Success"];
+            ViewBag.Error = TempData["Error"];
+
             return View(dsPhong.ToList());
         }
-
-
-
 
         // Tạo mới
         [HttpGet]
         public IActionResult Create()
         {
-            ViewBag.DichVus = _context.DichVus.ToList(); // danh sách dịch vụ
+            ViewBag.DichVus = _context.DichVus.ToList();
             return View();
         }
 
-        // POST: Phong/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
         public IActionResult Create(Phong phong, List<int> SelectedDichVus)
         {
             var maTaiKhoan = HttpContext.Session.GetInt32("MaTaiKhoan");
-            Console.WriteLine("MaTaiKhoan trong session: " + maTaiKhoan);
-
-
             if (maTaiKhoan == null)
                 return RedirectToAction("Login", "Account");
 
-            
-     
-
             var chuNha = _context.ChuNhas.FirstOrDefault(c => c.MaTaiKhoan == maTaiKhoan);
-
             if (chuNha == null)
             {
                 ModelState.AddModelError("", "Không tìm thấy thông tin chủ nhà.");
@@ -87,7 +71,6 @@ namespace DA.Controllers
                 _context.Phongs.Add(phong);
                 _context.SaveChanges();
 
-                // Lưu danh sách dịch vụ đi kèm
                 if (SelectedDichVus != null && SelectedDichVus.Any())
                 {
                     foreach (var maDv in SelectedDichVus)
@@ -99,18 +82,16 @@ namespace DA.Controllers
                             NgayApDung = DateTime.Now
                         });
                     }
-
                     _context.SaveChanges();
                 }
 
+                TempData["Success"] = "Thêm phòng thành công.";
                 return RedirectToAction("Index");
             }
 
-            // Nếu có lỗi
             ViewBag.DichVus = _context.DichVus.ToList();
             return View(phong);
         }
-
 
         // Sửa
         public IActionResult Edit(int id)
@@ -134,13 +115,15 @@ namespace DA.Controllers
                     phongCu.TrangThai = phong.TrangThai;
 
                     _context.SaveChanges();
+
+                    TempData["Success"] = "Cập nhật thông tin phòng thành công.";
                     return RedirectToAction("Index");
                 }
-                return NotFound();
+                TempData["Error"] = "Không tìm thấy phòng cần cập nhật.";
+                return RedirectToAction("Index");
             }
             return View(phong);
         }
-
 
         // Xóa
         public IActionResult Delete(int id)
@@ -148,13 +131,20 @@ namespace DA.Controllers
             var phong = _context.Phongs.Find(id);
             if (phong != null)
             {
+                if (phong.TrangThai == "Đang thuê")
+                {
+                    TempData["Error"] = "Không thể xóa phòng đang cho thuê.";
+                    return RedirectToAction("Index");
+                }
+
                 _context.Phongs.Remove(phong);
                 _context.SaveChanges();
+                TempData["Success"] = "Xóa phòng thành công.";
             }
             return RedirectToAction("Index");
         }
 
-        // Quản lý lịch sử lưu trú
+        // Lịch sử lưu trú
         public IActionResult LichSu(int maPhong)
         {
             var ls = _context.LichSuLuuTrus
@@ -163,6 +153,5 @@ namespace DA.Controllers
                              .ToList();
             return View(ls);
         }
-
     }
 }
