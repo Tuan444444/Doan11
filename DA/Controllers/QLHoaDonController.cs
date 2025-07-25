@@ -4,6 +4,9 @@ using DA.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using QuestPDF.Fluent;
+using QuestPDF.Helpers;
+using QuestPDF.Infrastructure;
 
 namespace DA.Controllers
 {
@@ -213,7 +216,7 @@ namespace DA.Controllers
                 {
                     MaHoaDon = hoaDon.MaHoaDon,
                     MaDichVu = dv.MaDichVu,
-                    SoLuong = (decimal)soLuong,
+                    SoLuong = soLuong,
                     DonGia = (decimal)donGia,
                     ThanhTien = (decimal)thanhTien
                 };
@@ -227,7 +230,111 @@ namespace DA.Controllers
             return RedirectToAction("Index");
         }
 
+        public IActionResult XuatHoaDonPdf(int id)
+        {
+            QuestPDF.Settings.License = LicenseType.Community;
 
+            var hoaDon = _context.HoaDons
+                .Include(h => h.HopDong).ThenInclude(hd => hd.Phong)
+                .Include(h => h.HopDong).ThenInclude(hd => hd.NguoiThue)
+                .Include(h => h.ChiTietHoaDons).ThenInclude(ct => ct.DichVu)
+                .FirstOrDefault(h => h.MaHoaDon == id);
+
+            if (hoaDon == null)
+                return NotFound();
+
+            var tienPhong = hoaDon.HopDong?.Phong?.GiaPhong ?? 0;
+            var tongDichVu = hoaDon.ChiTietHoaDons.Sum(ct => ct.ThanhTien);
+
+            // Lấy phí phạt nếu có (giả định có cột hoặc bảng riêng, ở đây đơn giản hóa)
+            decimal phiPhat = _context.PhanHois
+                .Where(p => p.MaNguoiThue == hoaDon.HopDong.MaNguoiThue && p.KetQuaXuLy.Contains("Phạt"))
+                .Sum(p => 50000); // giả định mỗi vi phạm 50k
+
+            var tongTien = tienPhong + tongDichVu + phiPhat;
+
+            var stream = new MemoryStream();
+
+            var document = Document.Create(container =>
+            {
+                container.Page(page =>
+                {
+                    page.Size(PageSizes.A4);
+                    page.Margin(2, Unit.Centimetre);
+                    page.DefaultTextStyle(x => x.FontSize(12));
+
+                    // Header
+                    page.Header().AlignCenter().Column(col =>
+                    {
+                        col.Item().Text("HỆ THỐNG NHÀ TRỌ ABC").Bold().FontSize(14).FontColor(Colors.Blue.Medium);
+                        col.Item().Text("Địa chỉ: 123 Trọ Xanh, TP.HCM").FontSize(10);
+                        col.Item().Text("Hotline: 0989 000 999").FontSize(10);
+                    });
+
+                    page.Content().PaddingVertical(15).Column(col =>
+                    {
+                        col.Spacing(10);
+                        col.Item().AlignCenter().Text("HÓA ĐƠN THANH TOÁN").FontSize(20).Bold();
+                        col.Item().LineHorizontal(1).LineColor(Colors.Grey.Lighten2);
+
+                        // Thông tin hóa đơn
+                        col.Item().Text($"Mã hóa đơn: {hoaDon.MaHoaDon}");
+                        col.Item().Text($"Ngày lập: {hoaDon.NgayLap:dd/MM/yyyy}");
+                        col.Item().Text($"Trạng thái: {hoaDon.TrangThaiThanhToan}");
+                        col.Item().Text($"Phòng: {hoaDon.HopDong?.Phong?.TenPhong ?? "N/A"}");
+                        col.Item().Text($"Người thuê: {hoaDon.HopDong?.NguoiThue?.HoTen ?? "N/A"}");
+                        col.Item().Text($"SĐT: {hoaDon.HopDong?.NguoiThue?.SoDienThoai ?? "N/A"}");
+
+                        col.Item().LineHorizontal(1).LineColor(Colors.Grey.Lighten2);
+
+                        // Dịch vụ - Bảng
+                        col.Item().Text("Chi tiết dịch vụ sử dụng:").Bold().FontSize(13);
+                        col.Item().Table(table =>
+                        {
+                            table.ColumnsDefinition(columns =>
+                            {
+                                columns.RelativeColumn(2); // Dịch vụ
+                                columns.ConstantColumn(40); // SL
+                                columns.ConstantColumn(60); // Đơn giá
+                                columns.ConstantColumn(80); // Thành tiền
+                            });
+
+                            table.Header(header =>
+                            {
+                                header.Cell().Text("Dịch vụ").Bold();
+                                header.Cell().AlignRight().Text("Số lượng").Bold();
+                                header.Cell().AlignRight().Text("Đơn giá").Bold();
+                                header.Cell().AlignRight().Text("Thành tiền").Bold();
+                            });
+
+                            foreach (var ct in hoaDon.ChiTietHoaDons)
+                            {
+                                table.Cell().Text(ct.DichVu?.TenDichVu ?? "N/A");
+                                table.Cell().AlignRight().Text(ct.SoLuong.ToString());
+                                table.Cell().AlignRight().Text($"{ct.DonGia:N0} đ");
+                                table.Cell().AlignRight().Text($"{ct.ThanhTien:N0} đ");
+                            }
+                        });
+
+                        col.Item().LineHorizontal(1).LineColor(Colors.Grey.Lighten2);
+
+                        // Tổng kết cuối cùng
+                        col.Item().Text($"Tiền phòng: {tienPhong:N0} đ");
+                        col.Item().Text($"Tổng dịch vụ: {tongDichVu:N0} đ");
+                        if (phiPhat > 0)
+                            col.Item().Text($"Phí phạt: {phiPhat:N0} đ").FontColor(Colors.Red.Medium);
+                        col.Item().Text($"Tổng cộng: {tongTien:N0} đ").FontSize(14).Bold().FontColor(Colors.Black);
+                    });
+
+                    page.Footer().AlignCenter().Text("Cảm ơn quý khách đã sử dụng dịch vụ!").Italic().FontSize(10).FontColor(Colors.Grey.Darken1);
+                });
+            });
+
+            document.GeneratePdf(stream);
+            stream.Position = 0;
+
+            return File(stream.ToArray(), "application/pdf", $"HoaDon_{hoaDon.MaHoaDon}.pdf");
+        }
 
     }
 }

@@ -1,0 +1,199 @@
+﻿<!DOCTYPE html>
+
+<html>
+<head>
+    <style>
+    <meta name="viewport" content="width=device-width" />
+    <title>@ViewBag.Title</title>
+    body, html {
+    height: 100%;
+    margin: 0;
+    font-family: 'Montserrat', sans-serif;
+    }
+
+    .register-page {
+    height: 100vh;
+    width: 100%;
+    background: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab);
+    background-size: 400% 400%;
+    animation: gradientBG 15s ease infinite;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    }
+
+    @@keyframes gradientBG {
+    0% {background-position: 0% 50%;}
+    50% {background-position: 100% 50%;}
+    100% {background-position: 0% 50%;}
+    }
+
+    .register-form-container {
+    background: #ffffff;
+    padding: 40px 50px;
+    border-radius: 12px;
+    box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+    max-width: 450px;
+    width: 100%;
+    }
+
+    .register-form-container h2 {
+    text-align: center;
+    margin-bottom: 20px;
+    font-weight: bold;
+    color: #333;
+    }
+
+    .register-form-container .form-group {
+    margin-bottom: 15px;
+    }
+
+    .register-form-container label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: 600;
+    color: #555;
+    }
+
+    .register-form-container input,
+    .register-form-container select {
+    width: 100%;
+    padding: 10px 15px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    }
+
+    .register-form-container input:focus,
+    .register-form-container select:focus {
+    outline: none;
+    border-color: #23a6d5;
+    }
+
+    .btn-register {
+    width: 100%;
+    background: #23a6d5;
+    color: #fff;
+    border: none;
+    padding: 12px;
+    font-size: 14px;
+    text-transform: uppercase;
+    font-weight: bold;
+    border-radius: 30px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    }
+
+    .btn-register:hover {
+    background: #1b7fac;
+    }
+
+    .text-danger {
+    font-size: 13px;
+    color: #e74c3c;
+    }
+
+        body, html {
+            height: 100%;
+            margin: 0;
+            font-family: 'Montserrat', sans-serif;
+        }
+
+        .login-page {
+            height: 100vh;
+            width: 100%;
+            background: linear-gradient(-45deg, #1CB5E0, #000851, #1CB5E0, #000851);
+            background-size: 400% 400%;
+            animation: gradientLogin 12s ease infinite;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        @@keyframes gradientLogin {
+            0%
+
+        {
+            background-position: 0% 50%;
+        }
+
+        50% {
+            background-position: 100% 50%;
+        }
+
+        100% {
+            background-position: 0% 50%;
+        }
+
+        }
+
+        .login-form-container {
+            background: #ffffff;
+            padding: 40px 50px;
+            border-radius: 12px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+            max-width: 400px;
+            width: 100%;
+        }
+
+            .login-form-container h2 {
+                text-align: center;
+                margin-bottom: 20px;
+                font-weight: bold;
+                color: #333;
+            }
+
+            .login-form-container .form-group {
+                margin-bottom: 15px;
+            }
+
+            .login-form-container label {
+                display: block;
+                margin-bottom: 5px;
+                font-weight: 600;
+                color: #555;
+            }
+
+            .login-form-container input {
+                width: 100%;
+                padding: 10px 15px;
+                border: 1px solid #ddd;
+                border-radius: 5px;
+            }
+
+                .login-form-container input:focus {
+                    outline: none;
+                    border-color: #1CB5E0;
+                }
+
+        .btn-login {
+            width: 100%;
+            background: #1CB5E0;
+            color: #fff;
+            border: none;
+            padding: 12px;
+            font-size: 14px;
+            text-transform: uppercase;
+            font-weight: bold;
+            border-radius: 30px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+            .btn-login:hover {
+                background: #0f7ca7;
+            }
+
+        .text-danger {
+            font-size: 13px;
+            color: #e74c3c;
+        }
+
+    </style>
+</head>
+<body>
+    <div>
+        @RenderBody()
+    </div>
+    @RenderSection("Scripts", required: false)
+</body>
+</html>

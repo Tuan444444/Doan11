@@ -1,74 +1,78 @@
 ﻿@model DA.ViewModels.RegisterViewModel
 
-<h2>Đăng ký</h2>
+@{
 
-<form asp-action="Register" method="post">
-    @Html.AntiForgeryToken()
+    Layout = "_LogLayout";
+}
 
-    <!-- Hiển thị lỗi tổng quát -->
-    <div asp-validation-summary="All" class="text-danger"></div>
+<div class="register-page">
+    <div class="register-form-container">
+        <h2>Đăng ký</h2>
 
-    <!-- Loại tài khoản -->
-    <div class="form-group">
-        <label asp-for="LoaiTaiKhoan" class="form-label"></label>
-        <select asp-for="LoaiTaiKhoan" class="form-select" id="roleSelect">
-            <option value="">-- Chọn loại tài khoản --</option>
-            <option value="Admin">Admin</option>
-            <option value="ChuNha">Chủ nhà</option>
-            <option value="NguoiThue">Người thuê</option>
-        </select>
-        <span asp-validation-for="LoaiTaiKhoan" class="text-danger"></span>
+        <form asp-action="Register" method="post">
+            @Html.AntiForgeryToken()
+
+            <div asp-validation-summary="All" class="text-danger"></div>
+
+            <div class="form-group">
+                <label asp-for="LoaiTaiKhoan"></label>
+                <select asp-for="LoaiTaiKhoan" class="form-select" id="roleSelect">
+                    <option value="">-- Chọn loại tài khoản --</option>
+                    <option value="Admin">Admin</option>
+                    <option value="ChuNha">Chủ nhà</option>
+                    <option value="NguoiThue">Người thuê</option>
+                </select>
+                <span asp-validation-for="LoaiTaiKhoan" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="TenDangNhap"></label>
+                <input asp-for="TenDangNhap" placeholder="Tên đăng nhập" class="form-control" />
+                <span asp-validation-for="TenDangNhap" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="MatKhau"></label>
+                <input asp-for="MatKhau" placeholder="Mật khẩu" type="password" class="form-control" />
+                <span asp-validation-for="MatKhau" class="text-danger"></span>
+            </div>
+
+            <div id="detailFields" style="display:none;">
+                <div class="form-group">
+                    <label asp-for="HoTen"></label>
+                    <input asp-for="HoTen" placeholder="Họ tên" class="form-control" />
+                    <span asp-validation-for="HoTen" class="text-danger"></span>
+                </div>
+
+                <div class="form-group">
+                    <label asp-for="CCCD"></label>
+                    <input asp-for="CCCD" placeholder="CCCD" class="form-control" />
+                    <span asp-validation-for="CCCD" class="text-danger"></span>
+                </div>
+
+                <div class="form-group">
+                    <label asp-for="SoDienThoai"></label>
+                    <input asp-for="SoDienThoai" placeholder="Số điện thoại" class="form-control" />
+                    <span asp-validation-for="SoDienThoai" class="text-danger"></span>
+                </div>
+
+                <div class="form-group">
+                    <label asp-for="Email"></label>
+                    <input asp-for="Email" placeholder="Email" class="form-control" />
+                    <span asp-validation-for="Email" class="text-danger"></span>
+                </div>
+
+                <div class="form-group">
+                    <label asp-for="DiaChi"></label>
+                    <input asp-for="DiaChi" placeholder="Địa chỉ" class="form-control" />
+                    <span asp-validation-for="DiaChi" class="text-danger"></span>
+                </div>
+            </div>
+
+            <button type="submit" class="btn-register">Đăng ký</button>
+        </form>
     </div>
-
-    <!-- Tên đăng nhập -->
-    <div class="form-group">
-        <label asp-for="TenDangNhap" class="form-label"></label>
-        <input asp-for="TenDangNhap" placeholder="Tên đăng nhập" class="form-control" />
-        <span asp-validation-for="TenDangNhap" class="text-danger"></span>
-    </div>
-
-    <!-- Mật khẩu -->
-    <div class="form-group">
-        <label asp-for="MatKhau" class="form-label"></label>
-        <input asp-for="MatKhau" placeholder="Mật khẩu" type="password" class="form-control" />
-        <span asp-validation-for="MatKhau" class="text-danger"></span>
-    </div>
-
-    <!-- Các trường chi tiết -->
-    <div id="detailFields" style="display:none;">
-        <div class="form-group">
-            <label asp-for="HoTen" class="form-label"></label>
-            <input asp-for="HoTen" placeholder="Họ tên" class="form-control" />
-            <span asp-validation-for="HoTen" class="text-danger"></span>
-        </div>
-
-        <div class="form-group">
-            <label asp-for="CCCD" class="form-label"></label>
-            <input asp-for="CCCD" placeholder="CCCD" class="form-control" />
-            <span asp-validation-for="CCCD" class="text-danger"></span>
-        </div>
-
-        <div class="form-group">
-            <label asp-for="SoDienThoai" class="form-label"></label>
-            <input asp-for="SoDienThoai" placeholder="Số điện thoại" class="form-control" />
-            <span asp-validation-for="SoDienThoai" class="text-danger"></span>
-        </div>
-
-        <div class="form-group">
-            <label asp-for="Email" class="form-label"></label>
-            <input asp-for="Email" placeholder="Email" class="form-control" />
-            <span asp-validation-for="Email" class="text-danger"></span>
-        </div>
-
-        <div class="form-group">
-            <label asp-for="DiaChi" class="form-label"></label>
-            <input asp-for="DiaChi" placeholder="Địa chỉ" class="form-control" />
-            <span asp-validation-for="DiaChi" class="text-danger"></span>
-        </div>
-    </div>
-
-    <button type="submit" class="btn btn-primary mt-3">Đăng ký</button>
-</form>
+</div>
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />

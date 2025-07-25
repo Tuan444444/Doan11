@@ -1,7 +1,7 @@
 ﻿using DA.Models;
 using Microsoft.Extensions.Options;
-using System.Net.Mail;
 using System.Net;
+using System.Net.Mail;
 
 namespace DA.SendEmail
 {
@@ -9,34 +9,25 @@ namespace DA.SendEmail
     {
         private readonly EmailSettings _settings;
 
-        public MailHelper(IOptions<EmailSettings> settings)
+        public MailHelper(IOptions<EmailSettings> options)
         {
-            _settings = settings.Value;
+            _settings = options.Value;
         }
 
-        public async Task SendMailAsync(string to, string subject, string body)
+        public async Task SendMail(string toEmail, string subject, string body)
         {
-            var fromAddress = new MailAddress(_settings.From, _settings.DisplayName);
-            var toAddress = new MailAddress(to);
-
-            using var smtp = new SmtpClient
+            using (var client = new SmtpClient(_settings.Host, _settings.Port)
             {
-                Host = _settings.Host,
-                Port = _settings.Port,
                 EnableSsl = _settings.EnableSSL,
-                DeliveryMethod = SmtpDeliveryMethod.Network,
-                UseDefaultCredentials = false,
-                Credentials = new NetworkCredential(fromAddress.Address, _settings.Password)
-            };
-
-            using var message = new MailMessage(fromAddress, toAddress)
+                Credentials = new NetworkCredential(_settings.From, _settings.Password)
+            })
+            using (var message = new MailMessage(_settings.From, toEmail, subject, body))
             {
-                Subject = subject,
-                Body = body,
-                IsBodyHtml = true
-            };
-
-            await smtp.SendMailAsync(message);
+                message.IsBodyHtml = false; 
+                await client.SendMailAsync(message);
+            }
         }
     }
+
+   
 }

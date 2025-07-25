@@ -1,104 +1,51 @@
-﻿using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Options;
-using System;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
-using Microsoft.EntityFrameworkCore;
-using DA.Data;
-using DA.Models;
+﻿using DA.Data;
 using DA.SendEmail;
+using Microsoft.EntityFrameworkCore;
+using SendGrid.Helpers.Mail;
+
 
 public class HoaDonBackgroundService : BackgroundService
 {
     private readonly IServiceProvider _serviceProvider;
-    private readonly MailHelper _mailHelper;
 
-    public HoaDonBackgroundService(IServiceProvider serviceProvider, MailHelper mailHelper)
+    public HoaDonBackgroundService(IServiceProvider serviceProvider)
     {
         _serviceProvider = serviceProvider;
-        _mailHelper = mailHelper;
     }
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
         while (!stoppingToken.IsCancellationRequested)
         {
-            var today = DateTime.Now;
+            Console.WriteLine($"[LOG] HoaDonBackgroundService chạy lúc: {DateTime.Now}");
 
-            if (today.Day == 3)
+            try
             {
-                using var scope = _serviceProvider.CreateScope();
-                var db = scope.ServiceProvider.GetRequiredService<MyDbContext>();
-
-                var hopDongs = db.HopDongs
-                    .Include(h => h.NguoiThue)
-                    .Include(h => h.Phong)
-                    .Include(h => h.Phong.Phong_DichVus)
-                        .ThenInclude(pd => pd.DichVu)
-                    .Where(h => h.TrangThai == "Đang thuê" || h.TrangThai == "Còn hiệu lực")
-                    .ToList();
-
-                foreach (var hd in hopDongs)
+                using (var scope = _serviceProvider.CreateScope())
                 {
-                    bool daCo = db.HoaDons.Any(h =>
-                        h.MaHopDong == hd.MaHopDong &&
-                        h.NgayLap.Month == today.Month &&
-                        h.NgayLap.Year == today.Year);
+                    var db = scope.ServiceProvider.GetRequiredService<MyDbContext>();
+                    var mail = scope.ServiceProvider.GetRequiredService<DA.SendEmail.MailHelper>();
 
-                    if (!daCo)
+                    var nguoiThues = await db.NguoiThues.ToListAsync();
+
+                    foreach (var nt in nguoiThues)
                     {
-                        decimal tongTien = hd.Phong.GiaPhong;
+                        if (string.IsNullOrEmpty(nt.Email)) continue;
 
-                        var hoaDon = new HoaDon
-                        {
-                            MaHopDong = hd.MaHopDong,
-                            NgayLap = today,
-                            TrangThaiThanhToan = "Chưa thanh toán",
-                        };
-                        db.HoaDons.Add(hoaDon);
-                        db.SaveChanges();
+                        
+                       
+                        string subject = $"🧾 Hóa đơn tháng ";
+                        string body = $"Xin chào {nt.HoTen},\nĐây là hóa đơn tháng này.\nHãy kiểm tra chi tiết trong hệ thống.";
 
-                        foreach (var pd in hd.Phong.Phong_DichVus)
-                        {
-                            decimal soLuong = 1; // Hoặc tính tùy bạn
-                            decimal donGia = Convert.ToDecimal(pd.DichVu.DonGia);
-                            decimal thanhTien = soLuong * donGia;
+                        await mail.SendMail(nt.Email, subject, body);
 
-                            var chiTiet = new ChiTietHoaDon
-                            {
-                                MaHoaDon = hoaDon.MaHoaDon,
-                                MaDichVu = pd.DichVu.MaDichVu,
-                                SoLuong = soLuong,
-                                DonGia = donGia,
-                                ThanhTien = thanhTien
-                            };
-                            db.ChiTietHoaDons.Add(chiTiet);
-
-                            tongTien += thanhTien;
-                        }
-
-                        hoaDon.TongTien = tongTien;
-                        db.SaveChanges();
-
-                        // Gửi email
-                        string email = hd.NguoiThue.Email;
-                        string hoTen = hd.NguoiThue.HoTen;
-
-                        if (!string.IsNullOrEmpty(email))
-                        {
-                            string subject = $"Hóa đơn tháng {hoaDon.NgayLap:MM/yyyy}";
-                            string body = $@"
-                                Xin chào {hoTen},<br/>
-                                Đây là hóa đơn tháng {hoaDon.NgayLap:MM/yyyy}.<br/>
-                                Tổng tiền: {hoaDon.TongTien:N0} VND.<br/>
-                                Vui lòng thanh toán trước hạn.<br/>
-                                Trân trọng.";
-                            await _mailHelper.SendMailAsync(email, subject, body);
-                        }
+                        Console.WriteLine($"[LOG] Đã gửi cho: {nt.Email}");
                     }
                 }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"[ERROR] {ex.Message}");
             }
 
             await Task.Delay(TimeSpan.FromMinutes(1), stoppingToken);

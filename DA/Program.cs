@@ -1,8 +1,10 @@
 using DA.Data;
 using DA.Models;
 using DA.SendEmail;
+
 using Microsoft.EntityFrameworkCore;
 using QuestPDF.Infrastructure;
+using SendGrid.Helpers.Mail;
 using System;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -12,7 +14,7 @@ builder.Services.AddControllersWithViews();
 builder.Services.AddDbContext<MyDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 builder.Services.Configure<EmailSettings>(builder.Configuration.GetSection("EmailSettings"));
-builder.Services.AddSingleton<MailHelper>();
+builder.Services.AddSingleton<DA.SendEmail.MailHelper>();
 builder.Services.AddHostedService<HoaDonBackgroundService>();
 
 builder.Services.AddSession();
@@ -36,6 +38,6 @@ app.UseAuthorization();
 
 app.MapControllerRoute(
     name: "default",
-    pattern: "{controller=Account}/{action=Login}/{id?}");
+    pattern: "{controller=NguoiThue}/{action=Dashboard}/{id?}");
 
 app.Run();
