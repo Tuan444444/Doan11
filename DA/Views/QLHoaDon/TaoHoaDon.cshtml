@@ -35,7 +35,7 @@
             @for (int i = 0; i < Model.DichVus.Count; i++)
             {
                 var dv = Model.DichVus[i];
-                bool isChiSo = dv.TenDichVu?.ToLower().Contains("điện") == true || dv.TenDichVu?.ToLower().Contains("nước") == true;
+                var isChiSo = dv.TenDichVu?.ToLower().Contains("điện") == true || dv.TenDichVu?.ToLower().Contains("nước") == true;
                 <tr>
                     <td>
                         @dv.TenDichVu
@@ -51,7 +51,7 @@
                         {
                             <input type="number" class="form-control"
                                    name="DichVus[@i].ChiSoCu"
-                                   value="@dv.ChiSoCu.ToString(System.Globalization.CultureInfo.InvariantCulture)"
+                                   value="@(dv.ChiSoCu?.ToString(System.Globalization.CultureInfo.InvariantCulture) ?? "0")"
                                    readonly />
                         }
                         else
@@ -65,7 +65,7 @@
                         {
                             <input type="number" class="form-control"
                                    name="DichVus[@i].ChiSoMoi"
-                                   step="0.01" required />
+                                   step="0.01" min="0" required />
                         }
                         else
                         {
@@ -78,7 +78,7 @@
                         {
                             <input type="number" class="form-control"
                                    name="DichVus[@i].SoLuong"
-                                   value="@dv.SoLuong?.ToString(System.Globalization.CultureInfo.InvariantCulture) ?? " 1""
+                                   value="@(dv.SoLuong?.ToString(System.Globalization.CultureInfo.InvariantCulture) ?? "1")"
                                    min="0" step="0.01" />
                         }
                         else
@@ -95,7 +95,7 @@
     <div class="mb-3">
         <label for="PhiKhac">Phí khác (nếu có):</label>
         <input type="number" class="form-control" name="PhiKhac"
-               value="@Model.PhiKhac.ToString(System.Globalization.CultureInfo.InvariantCulture)"
+               value="@(Model.PhiKhac?.ToString(System.Globalization.CultureInfo.InvariantCulture) ?? "0")"
                step="1000" min="0" />
     </div>
 

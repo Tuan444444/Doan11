@@ -16,11 +16,11 @@ namespace DA.Models
         [Required]
         public int MaDichVu { get; set; }
 
-        [Required]
-        public decimal ChiSoCu { get; set; }
+        
+        public decimal? ChiSoCu { get; set; }
 
-        [Required]
-        public decimal ChiSoMoi { get; set; }
+        
+        public decimal? ChiSoMoi { get; set; }
 
         public DateTime NgayNhap { get; set; } = DateTime.Now;
 

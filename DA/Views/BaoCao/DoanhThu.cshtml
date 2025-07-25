@@ -1,23 +1,45 @@
 ﻿@{
-    ViewData["Title"] = "Thống kê Doanh thu";
+    Layout = "_Layout";
+    ViewData["Title"] = "💵 Thống kê Doanh thu";
 }
 
-<h3>💵 Thống kê Doanh thu</h3>
-<p>Tổng Doanh thu: <strong>@String.Format("{0:N0}", ViewBag.DoanhThu) VNĐ</strong></p>
-
-<canvas id="doanhThuChart"></canvas>
+<div class="container py-4">
+    <div class="row">
+        <div class="col-md-3">
+            @Html.Partial("_BaoCaoNav")
+        </div>
+        <div class="col-md-9">
+            <h2 class="mb-4">@ViewData["Title"]</h2>
+            <p><strong>@String.Format("{0:N0}", ViewBag.DoanhThu) VNĐ</strong></p>
+            <canvas id="doanhThuChart"></canvas>
+        </div>
+    </div>
+</div>
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
     new Chart(document.getElementById('doanhThuChart'), {
-        type: 'bar',
+        type: 'doughnut',
         data: {
-            labels: ['Tổng Doanh thu'],
+            labels: ['Doanh thu'],
             datasets: [{
-                label: 'Doanh thu',
-                data: [@ViewBag.DoanhThu],
-                backgroundColor: '#fd7e14'
+                data: [@ViewBag.DoanhThu, 0],
+                backgroundColor: ['#fd7e14', '#e9ecef']
             }]
+        },
+        options: {
+            responsive: true,
+            cutout: '70%',
+            plugins: {
+                legend: { position: 'bottom' }
+            }
         }
     });
 </script>
+
+<style>
+    canvas {
+        max-height: 350px;
+        width: 100%;
+    }
+</style>

@@ -1,22 +1,43 @@
 ﻿@{
-    ViewData["Title"] = "Thống kê Tình trạng phòng";
+    Layout = "_ChuLayout";
+    ViewData["Title"] = "🏠 Thống kê Tình trạng Phòng";
 }
 
-<h3>🏠 Thống kê Tình trạng phòng</h3>
-
-<canvas id="phongChart"></canvas>
+<div class="container py-4">
+    <div class="row">
+        <div class="col-md-3">
+            @Html.Partial("_BaoCaoNav")
+        </div>
+        <div class="col-md-9">
+            <h2 class="mb-4">@ViewData["Title"]</h2>
+            <canvas id="phongChart"></canvas>
+        </div>
+    </div>
+</div>
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
     new Chart(document.getElementById('phongChart'), {
-        type: 'bar',
+        type: 'pie',
         data: {
             labels: ['Trống', 'Đang thuê', 'Bảo trì'],
             datasets: [{
-                label: 'Tình trạng phòng',
                 data: [@ViewBag.Trong, @ViewBag.DaThue, @ViewBag.BaoTri],
                 backgroundColor: ['#ffc107', '#17a2b8', '#6c757d']
             }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: { position: 'bottom' }
+            }
         }
     });
 </script>
+
+<style>
+    canvas {
+        max-height: 350px;
+        width: 100%;
+    }
+</style>

@@ -38,6 +38,6 @@ app.UseAuthorization();
 
 app.MapControllerRoute(
     name: "default",
-    pattern: "{controller=NguoiThue}/{action=Dashboard}/{id?}");
+    pattern: "{controller=HomePage}/{action=Index}/{id?}");
 
 app.Run();

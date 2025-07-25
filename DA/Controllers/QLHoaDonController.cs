@@ -19,17 +19,14 @@ namespace DA.Controllers
             _context = context;
         }
 
-        // GET: Hóa đơn
         public IActionResult Index()
         {
             var ds = _context.HoaDons
                 .Include(h => h.HopDong)
                 .ToList();
-
             return View(ds);
         }
 
-        // GET: Chi tiết hóa đơn
         public IActionResult Details(int id)
         {
             var hoaDon = _context.HoaDons
@@ -46,24 +43,19 @@ namespace DA.Controllers
             return View(hoaDon);
         }
 
-
-        // GET: HoaDon/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
-            if (id == null)
-                return NotFound();
+            if (id == null) return NotFound();
 
             var hoaDon = await _context.HoaDons
                 .Include(h => h.HopDong)
                 .FirstOrDefaultAsync(m => m.MaHoaDon == id);
 
-            if (hoaDon == null)
-                return NotFound();
+            if (hoaDon == null) return NotFound();
 
             return View(hoaDon);
         }
 
-        // POST: HoaDon/Delete/5
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed([Bind("MaHoaDon")] HoaDon hoaDon)
@@ -102,9 +94,9 @@ namespace DA.Controllers
                 .ToList();
 
             ViewBag.HopDongs = hopDongsChuaHoaDon;
-
             return View();
         }
+
         [HttpPost]
         public IActionResult ChonHopDong(int maHopDong)
         {
@@ -117,7 +109,6 @@ namespace DA.Controllers
             return RedirectToAction("TaoHoaDon", new { maHopDong });
         }
 
-        // GET: Tạo hóa đơn cho hợp đồng
         [HttpGet]
         public IActionResult TaoHoaDon(int maHopDong)
         {
@@ -141,21 +132,21 @@ namespace DA.Controllers
                     var dv = pd.DichVu;
                     var isChiSo = dv.TenDichVu.ToLower().Contains("điện") || dv.TenDichVu.ToLower().Contains("nước");
 
-                    decimal chiSoCu = 0;
+                    decimal? chiSoCu = 0;
                     if (isChiSo)
                     {
                         var cs = _context.ChiSoDichVus
                             .Where(c => c.MaHopDong == hopDong.MaHopDong && c.MaDichVu == dv.MaDichVu)
                             .OrderByDescending(c => c.NgayNhap)
                             .FirstOrDefault();
-                        chiSoCu = (decimal)(cs?.ChiSoMoi ?? 0);
+                        chiSoCu = cs?.ChiSoMoi ?? 0;
                     }
 
                     return new DichVuInput
                     {
                         MaDichVu = dv.MaDichVu,
                         TenDichVu = dv.TenDichVu,
-                        DonGia = (decimal)dv.DonGia,
+                        DonGia = dv.DonGia,
                         ChiSoCu = (decimal)chiSoCu
                     };
                 }).ToList()
@@ -163,9 +154,10 @@ namespace DA.Controllers
 
             return View(vm);
         }
+
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult TaoHoaDon(HoaDonCreateViewModel vm)
+        public async Task<IActionResult> TaoHoaDon(HoaDonCreateViewModel vm)
         {
             if (!ModelState.IsValid) return View(vm);
 
@@ -188,8 +180,8 @@ namespace DA.Controllers
                 decimal soLuong = 0;
                 if (isChiSo)
                 {
-                    decimal chiSoMoi = Convert.ToDecimal(dv.ChiSoMoi);
-                    decimal chiSoCu = Convert.ToDecimal(dv.ChiSoCu);
+                    decimal chiSoMoi = dv.ChiSoMoi ?? 0;
+                    decimal chiSoCu = dv.ChiSoCu  ?? 0;
 
                     soLuong = Math.Max(0, chiSoMoi - chiSoCu);
 
@@ -197,18 +189,18 @@ namespace DA.Controllers
                     {
                         MaHopDong = vm.MaHopDong,
                         MaDichVu = dv.MaDichVu,
-                        ChiSoCu = (decimal)chiSoCu,
-                        ChiSoMoi = (decimal)chiSoMoi,
+                        ChiSoCu = chiSoCu,
+                        ChiSoMoi = chiSoMoi,
                         NgayNhap = DateTime.Now
                     };
                     _context.ChiSoDichVus.Add(chiSo);
                 }
                 else
                 {
-                    soLuong = Convert.ToDecimal(dv.SoLuong ?? 0);
+                    soLuong = dv.SoLuong ?? 0;
                 }
 
-                decimal donGia = Convert.ToDecimal(dv.DonGia);
+                decimal donGia = dv.DonGia; // DonGia không nullable
                 decimal thanhTien = soLuong * donGia;
                 tongTien += thanhTien;
 
@@ -217,14 +209,15 @@ namespace DA.Controllers
                     MaHoaDon = hoaDon.MaHoaDon,
                     MaDichVu = dv.MaDichVu,
                     SoLuong = soLuong,
-                    DonGia = (decimal)donGia,
-                    ThanhTien = (decimal)thanhTien
+                    DonGia = donGia,
+                    ThanhTien = thanhTien
                 };
                 _context.ChiTietHoaDons.Add(ct);
             }
 
-            hoaDon.TongTien = (decimal?)tongTien;
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
+            hoaDon.TongTien = tongTien;
+            await _context.SaveChangesAsync();
 
             TempData["Message"] = "Tạo hóa đơn thành công.";
             return RedirectToAction("Index");
@@ -240,16 +233,14 @@ namespace DA.Controllers
                 .Include(h => h.ChiTietHoaDons).ThenInclude(ct => ct.DichVu)
                 .FirstOrDefault(h => h.MaHoaDon == id);
 
-            if (hoaDon == null)
-                return NotFound();
+            if (hoaDon == null) return NotFound();
 
             var tienPhong = hoaDon.HopDong?.Phong?.GiaPhong ?? 0;
             var tongDichVu = hoaDon.ChiTietHoaDons.Sum(ct => ct.ThanhTien);
 
-            // Lấy phí phạt nếu có (giả định có cột hoặc bảng riêng, ở đây đơn giản hóa)
             decimal phiPhat = _context.PhanHois
                 .Where(p => p.MaNguoiThue == hoaDon.HopDong.MaNguoiThue && p.KetQuaXuLy.Contains("Phạt"))
-                .Sum(p => 50000); // giả định mỗi vi phạm 50k
+                .Sum(p => 50000);
 
             var tongTien = tienPhong + tongDichVu + phiPhat;
 
@@ -263,7 +254,6 @@ namespace DA.Controllers
                     page.Margin(2, Unit.Centimetre);
                     page.DefaultTextStyle(x => x.FontSize(12));
 
-                    // Header
                     page.Header().AlignCenter().Column(col =>
                     {
                         col.Item().Text("HỆ THỐNG NHÀ TRỌ ABC").Bold().FontSize(14).FontColor(Colors.Blue.Medium);
@@ -277,7 +267,6 @@ namespace DA.Controllers
                         col.Item().AlignCenter().Text("HÓA ĐƠN THANH TOÁN").FontSize(20).Bold();
                         col.Item().LineHorizontal(1).LineColor(Colors.Grey.Lighten2);
 
-                        // Thông tin hóa đơn
                         col.Item().Text($"Mã hóa đơn: {hoaDon.MaHoaDon}");
                         col.Item().Text($"Ngày lập: {hoaDon.NgayLap:dd/MM/yyyy}");
                         col.Item().Text($"Trạng thái: {hoaDon.TrangThaiThanhToan}");
@@ -287,16 +276,15 @@ namespace DA.Controllers
 
                         col.Item().LineHorizontal(1).LineColor(Colors.Grey.Lighten2);
 
-                        // Dịch vụ - Bảng
                         col.Item().Text("Chi tiết dịch vụ sử dụng:").Bold().FontSize(13);
                         col.Item().Table(table =>
                         {
                             table.ColumnsDefinition(columns =>
                             {
-                                columns.RelativeColumn(2); // Dịch vụ
-                                columns.ConstantColumn(40); // SL
-                                columns.ConstantColumn(60); // Đơn giá
-                                columns.ConstantColumn(80); // Thành tiền
+                                columns.RelativeColumn(2);
+                                columns.ConstantColumn(40);
+                                columns.ConstantColumn(60);
+                                columns.ConstantColumn(80);
                             });
 
                             table.Header(header =>
@@ -318,11 +306,9 @@ namespace DA.Controllers
 
                         col.Item().LineHorizontal(1).LineColor(Colors.Grey.Lighten2);
 
-                        // Tổng kết cuối cùng
                         col.Item().Text($"Tiền phòng: {tienPhong:N0} đ");
                         col.Item().Text($"Tổng dịch vụ: {tongDichVu:N0} đ");
-                        if (phiPhat > 0)
-                            col.Item().Text($"Phí phạt: {phiPhat:N0} đ").FontColor(Colors.Red.Medium);
+                        if (phiPhat > 0) col.Item().Text($"Phí phạt: {phiPhat:N0} đ").FontColor(Colors.Red.Medium);
                         col.Item().Text($"Tổng cộng: {tongTien:N0} đ").FontSize(14).Bold().FontColor(Colors.Black);
                     });
 
@@ -332,10 +318,7 @@ namespace DA.Controllers
 
             document.GeneratePdf(stream);
             stream.Position = 0;
-
             return File(stream.ToArray(), "application/pdf", $"HoaDon_{hoaDon.MaHoaDon}.pdf");
         }
-
     }
 }
-
