@@ -15,7 +15,7 @@ namespace DA.ViewModels
         [ValidateNever]
         public List<DichVuInput> DichVus { get; set; }
 
-        public decimal PhiKhac { get; set; } = 0;
+        public decimal? PhiKhac { get; set; } = 0;
     }
 
     public class DichVuInput
@@ -23,8 +23,8 @@ namespace DA.ViewModels
         public int MaDichVu { get; set; }
         public string TenDichVu { get; set; }
         public decimal DonGia { get; set; }
-        public decimal ChiSoMoi { get; set; }
-        public decimal ChiSoCu { get; set; }
-        public int? SoLuong { get; set; }
+        public decimal? ChiSoMoi { get; set; }
+        public decimal? ChiSoCu { get; set; }
+        public decimal? SoLuong { get; set; }
     }
 }

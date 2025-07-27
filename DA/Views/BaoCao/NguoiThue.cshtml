@@ -1,23 +1,45 @@
 ﻿@{
-    ViewData["Title"] = "Thống kê Người thuê";
+    Layout = "_ChuLayout";
+    ViewData["Title"] = "👥 Thống kê Người thuê";
 }
 
-<h3>👥 Thống kê Người thuê</h3>
-<p>Tổng số người thuê: <strong>@ViewBag.TongNguoiThue</strong></p>
-
-<canvas id="nguoiThueChart"></canvas>
+<div class="container py-4">
+    <div class="row">
+        <div class="col-md-3">
+            @Html.Partial("_BaoCaoNav")
+        </div>
+        <div class="col-md-9">
+            <h2 class="mb-4">@ViewData["Title"]</h2>
+            <p><strong>@ViewBag.TongNguoiThue người</strong></p>
+            <canvas id="nguoiThueChart"></canvas>
+        </div>
+    </div>
+</div>
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
     new Chart(document.getElementById('nguoiThueChart'), {
-        type: 'bar',
+        type: 'doughnut',
         data: {
             labels: ['Người thuê'],
             datasets: [{
-                label: 'Số lượng',
-                data: [@ViewBag.TongNguoiThue],
-                backgroundColor: '#007bff'
+                data: [@ViewBag.TongNguoiThue, 0],
+                backgroundColor: ['#007bff', '#e9ecef']
             }]
+        },
+        options: {
+            responsive: true,
+            cutout: '70%',
+            plugins: {
+                legend: { position: 'bottom' }
+            }
         }
     });
 </script>
+
+<style>
+    canvas {
+        max-height: 350px;
+        width: 100%;
+    }
+</style>

@@ -14,9 +14,9 @@ namespace DA.Models
 
         public int MaDichVu { get; set; }
 
-        public decimal SoLuong { get; set; }
+        public decimal? SoLuong { get; set; }
 
-        public decimal DonGia { get; set; }
+        public decimal? DonGia { get; set; }
         //[DatabaseGenerated(DatabaseGeneratedOption.Computed)]
         public decimal ThanhTien { get; set; }
 

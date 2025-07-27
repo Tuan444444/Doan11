@@ -1,17 +1,43 @@
-﻿<h3>Thống kê Hợp đồng</h3>
-<canvas id="hdChart"></canvas>
+﻿@{
+    Layout = "_ChuLayout";
+    ViewData["Title"] = "📑 Thống kê Hợp đồng";
+}
+
+<div class="container py-4">
+    <div class="row">
+        <div class="col-md-3">
+            @Html.Partial("_BaoCaoNav")
+        </div>
+        <div class="col-md-9">
+            <h2 class="mb-4">@ViewData["Title"]</h2>
+            <canvas id="hdChart"></canvas>
+        </div>
+    </div>
+</div>
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
     new Chart(document.getElementById('hdChart'), {
-        type: 'bar',
+        type: 'pie',
         data: {
             labels: ['Còn hiệu lực', 'Hết hạn'],
             datasets: [{
-                label: 'Hợp đồng',
                 data: [@ViewBag.HieuLuc, @ViewBag.HetHan],
                 backgroundColor: ['#28a745', '#dc3545']
             }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: { position: 'bottom' }
+            }
         }
     });
 </script>
+
+<style>
+    canvas {
+        max-height: 350px;
+        width: 100%;
+    }
+</style>
