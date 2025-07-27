@@ -3,8 +3,6 @@ using DA.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -19,121 +17,59 @@ namespace DA.Controllers
             _context = context;
         }
 
-        // GET: Danh sách người thuê
+        // GET: Index
         public async Task<IActionResult> Index(string searchString)
         {
             var query = _context.NguoiThues.Include(n => n.TaiKhoan).AsQueryable();
 
             if (!string.IsNullOrEmpty(searchString))
-            {
                 query = query.Where(nt => nt.HoTen.Contains(searchString));
-            }
 
             ViewData["CurrentFilter"] = searchString;
             return View(await query.ToListAsync());
         }
 
+        public IActionResult Create()
+        {
+            // Chọn tài khoản chưa có người thuê gắn kèm
+            var taiKhoansChuaLienKet = _context.TaiKhoans
+                .Where(tk => !_context.NguoiThues.Any(nt => nt.MaTaiKhoan == tk.MaTaiKhoan))
+                .ToList();
 
-        // GET: Create - Truyền sẵn MaTaiKhoan từ đăng ký
+            ViewBag.MaTaiKhoan = new SelectList(taiKhoansChuaLienKet, "MaTaiKhoan", "MaTaiKhoan"); // ✅ chọn MaTaiKhoan để hiển thị và chọn
 
-        // GET: Create
-        //public IActionResult Create()
-        //{
-        //    var danhSachTaiKhoanChuaLienKet = _context.TaiKhoans
-        //        .Where(t => t.LoaiTaiKhoan == "NguoiThue" && !_context.NguoiThues.Any(nt => nt.MaTaiKhoan == t.MaTaiKhoan))
-        //        .Select(t => new SelectListItem
-        //        {
-        //            Value = t.MaTaiKhoan.ToString(),
-        //            Text = t.MaTaiKhoan.ToString() // 👉 Hiển thị Mã tài khoản
-        //        }).ToList();
-
-        //    ViewBag.MaTaiKhoan = danhSachTaiKhoanChuaLienKet;
-
-        //    return View();
-        //}
-
-        //public IActionResult Create()
-        //{
-        //    var danhSachTaiKhoanChuaLienKet = _context.TaiKhoans
-        //        .Where(t => t.LoaiTaiKhoan == "NguoiThue"
-        //                    && !_context.NguoiThues.Any(nt => nt.MaTaiKhoan == t.MaTaiKhoan))
-        //        .Select(t => new SelectListItem
-        //        {
-        //            Value = t.MaTaiKhoan.ToString(),
-        //            Text = t.TenDangNhap // nên hiển thị TenDangNhap, dễ nhìn
-        //        }).ToList();
-
-        //    danhSachTaiKhoanChuaLienKet.Insert(0, new SelectListItem
-        //    {
-        //        Value = "",
-        //        Text = "-- Chọn tài khoản --"
-        //    });
-
-        //    ViewBag.MaTaiKhoan = danhSachTaiKhoanChuaLienKet;
-
-        //    return View();
-        //}
+            return View();
+        }
 
 
-        // POST: Create
-        //[HttpPost]
-        //[ValidateAntiForgeryToken]
-        //public async Task<IActionResult> Create(NguoiThue nguoiThue)
-        //{
-        //    if (ModelState.IsValid)
-        //    {
-        //        _context.Add(nguoiThue);
-        //        await _context.SaveChangesAsync();
-        //        return RedirectToAction(nameof(Index));
-        //    }
 
-        //    // Load lại danh sách nếu có lỗi
-        //    var danhSachTaiKhoanChuaLienKet = _context.TaiKhoans
-        //        .Where(t => t.LoaiTaiKhoan == "NguoiThue" && !_context.NguoiThues.Any(nt => nt.MaTaiKhoan == t.MaTaiKhoan))
-        //        .Select(t => new SelectListItem
-        //        {
-        //            Value = t.MaTaiKhoan.ToString(),
-        //            Text = t.MaTaiKhoan.ToString() // 👉 Hiển thị lại Mã tài khoản khi lỗi
-        //        }).ToList();
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Create(NguoiThue nguoiThue)
+        {
+            if (_context.NguoiThues.Any(nt => nt.CCCD == nguoiThue.CCCD))
+            {
+                ModelState.AddModelError("CCCD", "CCCD đã tồn tại");
+            }
 
-        //    ViewBag.MaTaiKhoan = danhSachTaiKhoanChuaLienKet;
+            if (!ModelState.IsValid)
+            {
+                // Khi lỗi thì cần load lại dropdown MaTaiKhoan
+                var taiKhoansChuaLienKet = _context.TaiKhoans
+                    .Where(tk => !_context.NguoiThues.Any(nt => nt.MaTaiKhoan == tk.MaTaiKhoan))
+                    .ToList();
 
-        //    return View(nguoiThue);
-        //}
+                ViewBag.MaTaiKhoan = new SelectList(taiKhoansChuaLienKet, "MaTaiKhoan", "MaTaiKhoan");
+                return View(nguoiThue);
+            }
 
-        //[HttpPost]
-        //[ValidateAntiForgeryToken]
-        //public async Task<IActionResult> Create(NguoiThue nguoiThue)
-        //{
-        //    if (ModelState.IsValid)
-        //    {
-        //        _context.Add(nguoiThue);
-        //        await _context.SaveChangesAsync();
-        //        return RedirectToAction(nameof(Index));
-        //    }
+            _context.Add(nguoiThue);
+            await _context.SaveChangesAsync();
+            return RedirectToAction(nameof(Index));
+        }
 
-        //    // Load lại
-        //    var danhSachTaiKhoanChuaLienKet = _context.TaiKhoans
-        //        .Where(t => t.LoaiTaiKhoan == "NguoiThue"
-        //                    && !_context.NguoiThues.Any(nt => nt.MaTaiKhoan == t.MaTaiKhoan))
-        //        .Select(t => new SelectListItem
-        //        {
-        //            Value = t.MaTaiKhoan.ToString(),
-        //            Text = t.TenDangNhap
-        //        }).ToList();
 
-        //    danhSachTaiKhoanChuaLienKet.Insert(0, new SelectListItem
-        //    {
-        //        Value = "",
-        //        Text = "-- Chọn tài khoản --"
-        //    });
-
-        //    ViewBag.MaTaiKhoan = danhSachTaiKhoanChuaLienKet;
-
-        //    return View(nguoiThue);
-        //}
-
-        // GET: QLNguoiThue/Edit/5
+        // ✅ EDIT: GET
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null) return NotFound();
@@ -144,29 +80,25 @@ namespace DA.Controllers
             return View(nguoiThue);
         }
 
-        // POST: Edit
+        // ✅ EDIT: POST
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(NguoiThue nguoiThue)
         {
-            // 🔍 BƯỚC 1: Kiểm tra tính hợp lệ của dữ liệu model
-            if (!ModelState.IsValid)
-            {
-                var allErrors = ModelState
-                    .Where(ms => ms.Value.Errors.Count > 0)
-                    .Select(ms => new { Field = ms.Key, Errors = ms.Value.Errors.Select(e => e.ErrorMessage) })
-                    .ToList();
+            var existing = await _context.NguoiThues.FindAsync(nguoiThue.MaNguoiThue);
+            if (existing == null) return NotFound();
 
-                // In ra log hoặc tạm return về view để kiểm tra
-                return Content(System.Text.Json.JsonSerializer.Serialize(allErrors));
+            // Ràng buộc: CCCD trùng nhưng không phải chính mình
+            if (_context.NguoiThues.Any(nt => nt.CCCD == nguoiThue.CCCD && nt.MaNguoiThue != nguoiThue.MaNguoiThue))
+            {
+                ModelState.AddModelError("CCCD", "CCCD đã tồn tại");
             }
 
-            // 🔍 BƯỚC 2: Kiểm tra người thuê có tồn tại trong CSDL không
-            var existing = await _context.NguoiThues.FindAsync(nguoiThue.MaNguoiThue);
-            if (existing == null)
-                return NotFound();
+            if (!ModelState.IsValid)
+            {
+                return View(nguoiThue);
+            }
 
-            // 🔁 BƯỚC 3: Cập nhật từng trường (tránh bind nhầm FK như MaTaiKhoan)
             existing.HoTen = nguoiThue.HoTen;
             existing.Email = nguoiThue.Email;
             existing.CCCD = nguoiThue.CCCD;
@@ -175,22 +107,16 @@ namespace DA.Controllers
 
             try
             {
-                // 💾 Lưu thay đổi vào CSDL
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
             catch (DbUpdateException ex)
             {
-                // 🧨 Nếu có lỗi khi lưu (thường do ràng buộc FK hoặc dữ liệu trống)
                 return Content("Lỗi khi lưu CSDL: " + ex.Message);
             }
         }
 
-
-
-
-        // GET: Delete
-        // GET: QLNguoiThue/Delete/5
+        // ✅ DELETE: GET
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null) return NotFound();
@@ -204,7 +130,7 @@ namespace DA.Controllers
             return View(nguoiThue);
         }
 
-        // POST: QLNguoiThue/Delete/5
+        // ✅ DELETE: POST
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
@@ -215,12 +141,10 @@ namespace DA.Controllers
                 _context.NguoiThues.Remove(nguoiThue);
                 await _context.SaveChangesAsync();
             }
-
             return RedirectToAction(nameof(Index));
         }
 
-
-        // GET: Details
+        // ✅ DETAILS
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null) return NotFound();

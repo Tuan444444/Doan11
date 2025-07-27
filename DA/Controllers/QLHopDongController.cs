@@ -104,8 +104,6 @@ namespace DA.Controllers
             return View(hopDong);
         }
 
-
-
         // GET: HopDong/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
@@ -182,6 +180,50 @@ namespace DA.Controllers
             }
 
             await _context.SaveChangesAsync();
+            return RedirectToAction(nameof(Index));
+        }
+
+        // GET: HopDong/Huy/5
+        public async Task<IActionResult> Huy(int? id)
+        {
+            if (id == null) return NotFound();
+
+            var hopDong = await _context.HopDongs
+                .Include(h => h.NguoiThue)
+                .Include(h => h.Phong)
+                .FirstOrDefaultAsync(h => h.MaHopDong == id);
+
+            if (hopDong == null) return NotFound();
+
+            return View(hopDong); // View sẽ hiển thị cảnh báo xác nhận hủy
+        }
+
+        // POST: HopDong/Huy/5
+        [HttpPost, ActionName("Huy")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> HuyConfirmed(int id)
+        {
+            var hopDong = await _context.HopDongs
+                .Include(h => h.Phong)
+                .FirstOrDefaultAsync(h => h.MaHopDong == id);
+
+            if (hopDong == null) return NotFound();
+
+            if (hopDong.TrangThai != "Còn hiệu lực")
+            {
+                TempData["Loi"] = "Chỉ có thể hủy hợp đồng còn hiệu lực.";
+                return RedirectToAction(nameof(Index));
+            }
+
+            hopDong.TrangThai = "Hủy";
+
+            if (hopDong.Phong != null)
+            {
+                hopDong.Phong.TrangThai = "Trống"; // cập nhật lại trạng thái phòng
+            }
+
+            await _context.SaveChangesAsync();
+            TempData["ThongBao"] = "Đã hủy hợp đồng thành công.";
             return RedirectToAction(nameof(Index));
         }
 

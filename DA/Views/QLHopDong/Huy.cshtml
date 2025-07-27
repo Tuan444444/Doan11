@@ -1,0 +1,20 @@
+﻿@model DA.Models.HopDong
+
+@{
+    ViewData["Title"] = "Xác nhận Hủy hợp đồng";
+}
+
+<h3 class="text-danger">⚠️ Bạn có chắc chắn muốn hủy hợp đồng số @Model.MaHopDong không?</h3>
+
+<div class="mb-3">
+    <strong>Người thuê:</strong> @Model.NguoiThue?.HoTen <br />
+    <strong>Phòng:</strong> @Model.Phong?.TenPhong <br />
+    <strong>Thời gian:</strong> @(Model.NgayBatDau?.ToString("dd/MM/yyyy")) - @(Model.NgayKetThuc?.ToString("dd/MM/yyyy"))
+
+</div>
+
+<form asp-action="Huy">
+    <input type="hidden" asp-for="MaHopDong" />
+    <button type="submit" class="btn btn-danger">Xác nhận Hủy</button>
+    <a asp-action="Index" class="btn btn-secondary">Quay lại</a>
+</form>

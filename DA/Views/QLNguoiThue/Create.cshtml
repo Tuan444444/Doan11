@@ -9,11 +9,15 @@
 <form asp-action="Create" method="post">
     @Html.AntiForgeryToken()
 
-     <div class="form-group mb-2"> 
-         <label asp-for="MaTaiKhoan"></label> 
-         <select asp-for="MaTaiKhoan" asp-items="ViewBag.MaTaiKhoan" class="form-control"></select> 
-         <span asp-validation-for="MaTaiKhoan" class="text-danger"></span> 
-     </div> 
+    <div class="form-group">
+        <label asp-for="MaTaiKhoan" class="control-label">Mã tài khoản</label>
+        <select asp-for="MaTaiKhoan" class="form-control" asp-items="ViewBag.MaTaiKhoan">
+            <option value="">-- Chọn mã tài khoản --</option>
+        </select>
+        <span asp-validation-for="MaTaiKhoan" class="text-danger"></span>
+    </div>
+
+
 
     <div class="form-group mb-2">
         <label asp-for="HoTen"></label>
@@ -21,11 +25,12 @@
         <span asp-validation-for="HoTen" class="text-danger"></span>
     </div>
 
-    <div class="form-group mb-2">
-        <label asp-for="CCCD"></label>
+    <div class="form-group">
+        <label asp-for="CCCD" class="control-label"></label>
         <input asp-for="CCCD" class="form-control" />
         <span asp-validation-for="CCCD" class="text-danger"></span>
     </div>
+
 
     <div class="form-group mb-2">
         <label asp-for="SoDienThoai"></label>
