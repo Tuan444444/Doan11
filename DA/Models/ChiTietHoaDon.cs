@@ -12,7 +12,7 @@ namespace DA.Models
 
         public int MaHoaDon { get; set; }
 
-        public int MaDichVu { get; set; }
+        public int? MaDichVu { get; set; }
 
         public decimal? SoLuong { get; set; }
 

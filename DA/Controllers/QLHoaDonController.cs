@@ -214,6 +214,19 @@ namespace DA.Controllers
                 };
                 _context.ChiTietHoaDons.Add(ct);
             }
+            if (vm.PhiKhac > 0)
+            {
+
+                var ctPhiKhac = new ChiTietHoaDon
+                {
+                    MaHoaDon = hoaDon.MaHoaDon,
+                    MaDichVu = null, // Hoặc bạn có thể tạo 1 `DichVu` tên "Phí khác" trong DB
+                    SoLuong = 1,
+                    DonGia = vm.PhiKhac,
+                    ThanhTien = (decimal)vm.PhiKhac
+                };
+                _context.ChiTietHoaDons.Add(ctPhiKhac);
+            }
 
             await _context.SaveChangesAsync();
             hoaDon.TongTien = tongTien;

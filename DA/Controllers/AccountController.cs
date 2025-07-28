@@ -87,23 +87,32 @@ public class AccountController : Controller
             return View(model);
 
         var tk = await _context.TaiKhoans
-            .FirstOrDefaultAsync(x => x.TenDangNhap == model.TenDangNhap && x.MatKhau == model.MatKhau);
+            .FirstOrDefaultAsync(x => x.TenDangNhap == model.TenDangNhap);
 
-        // 1️⃣ Phải check tk null trước
-        if (tk == null || tk.TrangThai == "Bị khóa")
+        if (tk == null)
         {
-            ModelState.AddModelError("", "Đăng nhập thất bại hoặc tài khoản bị khóa");
+            ModelState.AddModelError("", "Tên đăng nhập không tồn tại.");
             return View(model);
         }
 
-        // 2️⃣ Tồn tại tk thì mới lấy chuNha
+        if (tk.MatKhau != model.MatKhau)
+        {
+            ModelState.AddModelError("", "Mật khẩu không đúng. Vui lòng nhập lại!");
+            return View(model);
+        }
+
+        if (tk.TrangThai == "Bị khóa")
+        {
+            ModelState.AddModelError("", "Tài khoản đang bị khóa.");
+            return View(model);
+        }
+
         var chuNha = await _context.ChuNhas
             .FirstOrDefaultAsync(cn => cn.MaTaiKhoan == tk.MaTaiKhoan);
 
         HttpContext.Session.SetInt32("MaTaiKhoan", tk.MaTaiKhoan);
         HttpContext.Session.SetString("VaiTro", tk.LoaiTaiKhoan);
 
-        // 3️⃣ Nếu VaiTro là Chủ Nhà thì lưu MaChuNha (nếu có)
         if (tk.LoaiTaiKhoan == "ChuNha" && chuNha != null)
         {
             HttpContext.Session.SetInt32("MaChuNha", chuNha.MaChuNha);
@@ -118,6 +127,7 @@ public class AccountController : Controller
             _ => RedirectToAction("Dashboard", "NguoiThue")
         };
     }
+
 
 
     public IActionResult DangXuat()

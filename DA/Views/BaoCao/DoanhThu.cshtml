@@ -1,45 +1,84 @@
 ﻿@{
-    Layout = "_Layout";
-    ViewData["Title"] = "💵 Thống kê Doanh thu";
+    ViewData["Title"] = "Thống kê doanh thu";
+    var doanhThu = (decimal?)ViewBag.DoanhThu ?? 0;
+    var tienPhong = (decimal?)ViewBag.TienPhong ?? 0;
+    var dichVu = (decimal?)ViewBag.DichVu ?? 0;
+    var phiKhac = (decimal?)ViewBag.PhiKhac ?? 0;
 }
 
-<div class="container py-4">
+
+<h2>📊 Thống kê Doanh thu</h2>
+
+<form method="get" asp-action="DoanhThu" class="mb-4">
     <div class="row">
         <div class="col-md-3">
-            @Html.Partial("_BaoCaoNav")
+            <label>Tháng:</label>
+            <select name="month" class="form-select">
+                @for (int i = 1; i <= 12; i++)
+                {
+                    if (i == ViewBag.Thang)
+                    {
+                        <option value="@i" selected>Tháng @i</option>
+                    }
+                    else
+                    {
+                        <option value="@i">Tháng @i</option>
+                    }
+                }
+            </select>
         </div>
-        <div class="col-md-9">
-            <h2 class="mb-4">@ViewData["Title"]</h2>
-            <p><strong>@String.Format("{0:N0}", ViewBag.DoanhThu) VNĐ</strong></p>
-            <canvas id="doanhThuChart"></canvas>
+        <div class="col-md-3">
+            <label>Năm:</label>
+            <input type="number" name="year" class="form-control" value="@ViewBag.Nam" min="2000" max="2100" />
+        </div>
+        <div class="col-md-3 align-self-end">
+            <button type="submit" class="btn btn-primary">🔍 Lọc</button>
         </div>
     </div>
+</form>
+
+<h4>💰 Doanh thu tháng @ViewBag.Thang/@ViewBag.Nam:
+    <span class="text-success fw-bold">@doanhThu.ToString("N0") VNĐ</span>
+</h4>
+
+<div class="mt-5">
+    <canvas id="doanhThuChart" width="400" height="400"></canvas>
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<script>
-    new Chart(document.getElementById('doanhThuChart'), {
-        type: 'doughnut',
-        data: {
-            labels: ['Doanh thu'],
-            datasets: [{
-                data: [@ViewBag.DoanhThu, 0],
-                backgroundColor: ['#fd7e14', '#e9ecef']
-            }]
-        },
-        options: {
-            responsive: true,
-            cutout: '70%',
-            plugins: {
-                legend: { position: 'bottom' }
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+            <script>
+        const ctx = document.getElementById('doanhThuChart').getContext('2d');
+        const doanhThuChart = new Chart(ctx, {
+            type: 'pie',
+            data: {
+                labels: ['Tiền phòng', 'Dịch vụ', 'Phí khác'],
+                datasets: [{
+                    label: 'Cơ cấu doanh thu',
+                    data: [
+        @(tienPhong.ToString(System.Globalization.CultureInfo.InvariantCulture)),
+        @(dichVu.ToString(System.Globalization.CultureInfo.InvariantCulture)),
+        @(phiKhac.ToString(System.Globalization.CultureInfo.InvariantCulture))
+                    ],
+                    backgroundColor: [
+                        'rgba(54, 162, 235, 0.7)',
+                        'rgba(255, 206, 86, 0.7)',
+                        'rgba(255, 99, 132, 0.7)'
+                    ],
+                    borderColor: [
+                        'rgba(54, 162, 235, 1)',
+                        'rgba(255, 206, 86, 1)',
+                        'rgba(255, 99, 132, 1)'
+                    ],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true
             }
-        }
-    });
-</script>
+        });
+    </script>
 
-<style>
-    canvas {
-        max-height: 350px;
-        width: 100%;
-    }
-</style>
+    </script>
+}

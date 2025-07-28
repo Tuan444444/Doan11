@@ -57,11 +57,24 @@ namespace YourNamespace.Controllers
         }
 
         // 5) Thống kê Doanh thu
-        public IActionResult DoanhThu()
+        public IActionResult DoanhThu(int? month, int? year)
         {
-            ViewBag.DoanhThu = _context.HoaDons.Sum(h => h.TongTien);
+            // Nếu không có input thì mặc định lấy tháng/năm hiện tại
+            var thang = month ?? DateTime.Now.Month;
+            var nam = year ?? DateTime.Now.Year;
+
+            // Lọc theo tháng và năm
+            var doanhThu = _context.HoaDons
+                .Where(h => h.NgayLap.Month == thang && h.NgayLap.Year == nam)
+                .Sum(h => h.TongTien);
+
+            ViewBag.DoanhThu = doanhThu ?? 0; // Null-safe nếu chưa có hóa đơn
+            ViewBag.Thang = thang;
+            ViewBag.Nam = nam;
+
             return View();
         }
+
         public IActionResult Index()
         {
             // 1) Thống kê Hợp đồng
